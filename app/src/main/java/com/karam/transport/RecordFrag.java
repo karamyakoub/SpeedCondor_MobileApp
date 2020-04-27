@@ -2,6 +2,7 @@ package com.karam.transport;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -11,6 +12,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.os.CountDownTimer;
@@ -44,7 +46,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class RecordFrag extends BottomSheetDialogFragment implements View.OnClickListener , View.OnTouchListener {
-    TextView timerTxtvw,emailTxtVw;
+    Button btnFinalizar;
+    TextView timerTxtvw,emailTxtVw,motivoTitle;
     EditText obsEditTxt,emailEditTxt;
     Button recordBtn,deleteBtn,playBtn;
     LinearLayout recordLinLayout;
@@ -63,6 +66,8 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
     private Handler mHandler;
     Runnable mRunnable;
     String[] motivoDes;
+
+    int whitchActivity=0;//check activity 0 , produtos activity 1
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +76,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_record, container, false);
         timerTxtvw = view.findViewById(R.id.record_timer_txtvw);
         obsEditTxt= view.findViewById(R.id.record_obs_edittxt);
@@ -81,12 +87,18 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
         recordBar= view.findViewById(R.id.recorder_bar);
         recordLinLayout = view.findViewById(R.id.record_bar_layout);
         emailTxtVw = view.findViewById(R.id.recorder_email_txtvw);
-        //set Spinner
+        btnFinalizar = view.findViewById(R.id.check_finilizar_btn);
+        //set the output file path str that sent from parent fragment
+        Bundle args = this.getArguments();
+        outputFile = args.getString("outputFile");
+        emailTxtVw.setText(args.getString("email_cliente"));
+        whitchActivity = args.getInt("whitchActivity");
         //set Spinner
         setUpSpinner(view);
         //add listeners
         recordBtn.setOnClickListener(this);
         recordBar.setOnTouchListener(this);
+        btnFinalizar.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         deleteBtn.setOnClickListener(this);
         emailEditTxt.addTextChangedListener(new TextWatcher() {
@@ -96,7 +108,12 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ((CheckActivity)getActivity()).setEmail_cliente2(emailEditTxt.getText().toString());
+                if(whitchActivity==0){
+                    ((CheckActivity)getActivity()).setEmail_cliente2(emailEditTxt.getText().toString());
+                }else if(whitchActivity==1){
+                    ((ProdutosActivity)getActivity()).setEmail_cliente2(emailEditTxt.getText().toString());
+                }
+
             }
 
             @Override
@@ -112,7 +129,11 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                ((CheckActivity)getActivity()).setObs(obsEditTxt.getText().toString());
+                if(whitchActivity==0){
+                    ((CheckActivity)getActivity()).setObs(obsEditTxt.getText().toString());
+                }else if(whitchActivity==1){
+                    ((ProdutosActivity)getActivity()).setObs(obsEditTxt.getText().toString());
+                }
             }
 
             @Override
@@ -120,11 +141,19 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
 
             }
         });
-        //set the output file path str that sent from parent fragment
-        Bundle args = this.getArguments();
-        outputFile = args.getString("outputFile");
-        emailTxtVw.setText(args.getString("email_cliente"));
         return view;
+    }
+
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+        if(outputFile!=null){
+            File file = new File(outputFile);
+            if(file.exists()){
+                file.delete();
+            }
+        }
     }
 
     @Override
@@ -150,8 +179,6 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                             @Override
                             public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
                                 if (isClicked == false) {
-                                    ((CheckActivity)getActivity()).getDevButton().setEnabled(false);
-                                    ((CheckActivity)getActivity()).getRentregaButton().setEnabled(false);
                                     recordBtn.setBackgroundResource(R.drawable.record2);
                                     recordBtn.setEnabled(false);
                                     recordTiming();
@@ -174,8 +201,6 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                                         recorded();
                                         isClicked = !isClicked;
                                         recordBtn.setBackgroundResource(R.drawable.record);
-                                        ((CheckActivity)getActivity()).getDevButton().setEnabled(true);
-                                        ((CheckActivity)getActivity()).getRentregaButton().setEnabled(true);
                                     }
                                 }
                             }
@@ -189,6 +214,13 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                                 permissionToken.continuePermissionRequest();
                             }
                         }).check();
+                break;
+            case R.id.check_finilizar_btn:
+                if(whitchActivity==0){
+                    ((CheckActivity)getActivity()).finalizar();
+                }else if(whitchActivity==1){
+                    ((ProdutosActivity)getActivity()).finalizar();
+                }
                 break;
         }
     }
@@ -383,32 +415,37 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
         return true;
     }
 
-    private void setUpSpinner(View view){
+    private void setUpSpinner(View view) {
         motivoSpinner = view.findViewById(R.id.record_motivo_spinner);
-        motivoDes = getResources().getStringArray(R.array.motivos_dev_des);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, motivoDes) {
-            @Override
-            public View getDropDownView(int position, View convertView, ViewGroup parent)
-            {
-                View v = null;
-                v = super.getDropDownView(position, null, parent);
-                //v.setBackgroundColor(getResources().getColor(R.color.colorBege_app));
-                v.setBackgroundResource(R.drawable.spinner_background);
-                v.setElevation(5);
-                return v;
-            }
-        };
-        motivoSpinner.setAdapter(dataAdapter);
-        motivoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ((CheckActivity)getActivity()).setPosSpinner(position);
-            }
+        motivoTitle = view.findViewById(R.id.recorder_motivoTitle_txtvw);
+        if (whitchActivity == 0) {
+            motivoDes = getResources().getStringArray(R.array.motivos_dev_des);
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, motivoDes) {
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    View v = null;
+                    v = super.getDropDownView(position, null, parent);
+                    //v.setBackgroundColor(getResources().getColor(R.color.colorBege_app));
+                    v.setBackgroundResource(R.drawable.spinner_background);
+                    v.setElevation(5);
+                    return v;
+                }
+            };
+            motivoSpinner.setAdapter(dataAdapter);
+            motivoSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    ((CheckActivity) getActivity()).setPosSpinner(position);
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
+                }
+            });
+        }else {
+            motivoSpinner.setVisibility(View.INVISIBLE);
+            motivoTitle.setVisibility(View.INVISIBLE);
+        }
     }
 }

@@ -22,6 +22,7 @@
     <string name="conferencia_start_title">CONFÊRENCIA</string>
     <string name="conferencia_button_start">Conferir Mercadoria</string>
     <string name="conferencia_button_dev">Devolução total</string>
+    <string name="conferencia_button_per">perfeito</string>
     <string name="record_hold_message">Segure para gravar</string>
     <string name="no_flash">O celular é sem luz</string>
     <string name="details_local">Local da entrega</string>
@@ -43,6 +44,7 @@
     <string name="url_server_login">Login.php</string>
     <string name="url_server_load_carreg">LoadByCarga.php</string>
     <string name="url_server_save_notadevren">SaveNotaDevRen.php</string>
+    <string name="url_server_save_conferencia">SaveNotaConfer.php</string>
     //_____________________________________SQL
     <string name="db_sql_createTableCarga">CREATE TABLE IF NOT EXISTS CARGA
         (
@@ -85,19 +87,19 @@
                     FOREIGN KEY(NUMCAR) REFERENCES CARGA(NUMCAR)
                 );</string>
     <string name="db_sql_createTableProd">CREATE TABLE  IF NOT EXISTS PROD
-        (
-        ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-        CODPROD INT(10) NOT NULL,
-        NUMNOTA INT(10) NOT NULL,
-        QT INT(6),
-        DESCRICAO TEXT(40),
-        CODBARRA1 INT(20),
-        CODBARRA2 INT(20),
-        QTFALTA INT(6),
-        CODMOTIVO INT(2),
-        STDEV INT(1),
-        FOREIGN KEY(NUMNOTA) REFERENCES NF(NUMNOTA)
-        );
+                (
+                    ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    CODPROD INT(10) NOT NULL,
+                    NUMNOTA INT(10) NOT NULL,
+                    QT INT(6),
+                    DESCRICAO TEXT(40),
+                    CODBARRA1 INT(20),
+                    CODBARRA2 INT(20),
+                    QTFALTA INT(6),
+                    CODMOTIVO INT(3),
+                    STDEV INT(1),
+                    FOREIGN KEY(NUMNOTA) REFERENCES NF(NUMNOTA)
+                );
     </string>
     <string name="db_sql_dropTableCarga">
         DROP TABLE IF EXISTS CARGA;
@@ -133,6 +135,8 @@
     <string name="SHnota">numNota</string>//type long
     <string name="SHcodcli">codCli</string>//type long
     <string name="SHcliente">cliente</string>//type string
+    <string name="SHemail_cliente">email_cliente</string>
+    <string name="SHnotaPosition">nota_position</string>
     //__________________________ARRAYS
     //array motivos cos
     <string-array name="motivos_dev_cod">
@@ -186,6 +190,4 @@
     <string name="permission_location">Tem que conceder a permissão da localização</string>
     <string name="permission_audio">Tem que conceder a permissão da gravador de audio</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -219,9 +219,8 @@ public class BarcodeActivity extends AppCompatActivity implements View.OnClickLi
             final String barcode = firebaseVisionBarcodes.get(0).getRawValue();
             final String barcodeDisplay = firebaseVisionBarcodes.get(0).getDisplayValue();
             final Rect rec = firebaseVisionBarcodes.get(0).getBoundingBox();
-            final Activity myActivity = this;
             vib.vibrate(VibrationEffect.EFFECT_TICK);
-            CountDownTimer timer = new CountDownTimer(1,1000) {
+            CountDownTimer timer = new CountDownTimer(100,1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     OverlayLayout.LayoutParams params = new OverlayLayout.LayoutParams(rec.width(),rec.height());

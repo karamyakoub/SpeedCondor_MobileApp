@@ -3,14 +3,19 @@ package com.karam.transport;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.NetworkRequest;
 import android.os.Build;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Base64;
@@ -516,5 +521,49 @@ public class Methods {
 
     public static void closeLoadingDialog(){
         loadingDialog.dismiss();
+    }
+
+
+    public static boolean checkGPSTurndOn(Context context, final Activity activity) {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps_enabled = false;
+        boolean network_enabled = false;
+        try {
+            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        try {
+            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        } catch (Exception ex) {
+        }
+
+        if (!gps_enabled && !network_enabled) {
+            View view = Methods.setToastView(activity, "", false, context.getString(R.string.gps_notEnables)
+                    , true, "Configurações", true, "Fechar", true);
+            final AlertDialog alertDialog = new AlertDialog.Builder(context)
+                    .setView(view).create();
+            Button btnConfirm = view.findViewById(R.id.toast_btn_confirm);
+            btnConfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    activity.startActivity(intent);
+                }
+            });
+            Button btnCancel = view.findViewById(R.id.toast_btn_dismiss);
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+
+            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            alertDialog.show();
+            return false;
+        } else {
+            return true;
+        }
     }
 }

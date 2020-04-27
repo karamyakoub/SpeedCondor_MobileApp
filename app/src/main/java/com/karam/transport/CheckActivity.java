@@ -25,12 +25,11 @@ import java.util.HashMap;
 
 public class CheckActivity extends AppCompatActivity implements View.OnClickListener , View.OnTouchListener ,TaskListenerAct{
     LinearLayout masterLinLayaout;
-    Button startButton,devButton,rentregaButton;
+    Button startButton,devButton,rentregaButton,perButton;
     TextView codcli_check_txtvw,cliente_check_txtvw,nf_check_txtvw;
     String outputFile,email_cliente,email_cliente2,obs;
-    boolean isFinal = false;
     boolean isDoubleBackClick = false;
-    boolean devRentrega;
+    int devRentregaPer=-1;
     DBConnection dbConnection;
     Bundle args;
     NF nf;
@@ -42,14 +41,6 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
 
     public void setPosSpinner(int posSpinner) {
         this.posSpinner = posSpinner;
-    }
-
-    public Button getDevButton() {
-        return devButton;
-    }
-
-    public Button getRentregaButton() {
-        return rentregaButton;
     }
 
     public void setEmail_cliente2(String email_cliente2) {
@@ -72,6 +63,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         startButton = findViewById(R.id.check_start_btn);
         devButton = findViewById(R.id.check_btn_dev);
         rentregaButton = findViewById(R.id.check_btn_rentrega);
+        perButton = findViewById(R.id.check_btn_perfeito);
         //set the value of the items
         Intent intent = this.getIntent();
         args = intent.getExtras();
@@ -88,7 +80,9 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         startButton.setOnClickListener(this);
         devButton.setOnClickListener(this);
         rentregaButton.setOnClickListener(this);
+        perButton.setOnClickListener(this);
     }
+
 
 
     @Override
@@ -100,50 +94,42 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 Methods.setSharedPref(this,"long",getString(R.string.SHnota),numnota);
                 Methods.setSharedPref(this,"long",getString(R.string.SHcodcli),codcli);
                 Methods.setSharedPref(this,"string",getString(R.string.SHcliente),cliente);
+                Methods.setSharedPref(this,"string",getString(R.string.SHemail_cliente),email_cliente);
+                Methods.setSharedPref(this,"int",getString(R.string.SHnotaPosition),position);
                 Activity nActivity =  NotasActivity.getInstance();
                 nActivity.finish();
                 finish();
                 break;
             case R.id.check_btn_dev:
-                if(isFinal == false){
-                    pressLayout(true);
-                }else{
-                    if(email_cliente2!=null && !email_cliente2.trim().matches("") && !Methods.isValidEmail(email_cliente2)){
-                        showEmailInvalidMsg();
-                    }else{
-                        devRentrega = true;
-                        if(checkGPSTurndOn(CheckActivity.this,CheckActivity.this)) {
-                            showGenerateCredit();
-                        }
-                    }
-                }
+                pressLayout();
+                devRentregaPer = 4;
                 break;
             case R.id.check_btn_rentrega:
-                if(isFinal == false){
-                    pressLayout(false);
-                }else{
-                    if(email_cliente2!=null && !email_cliente2.trim().matches("") && !Methods.isValidEmail(email_cliente2)){
-                        showEmailInvalidMsg();
-                    }else{
-                        devRentrega = false;
-                        if(checkGPSTurndOn(CheckActivity.this,CheckActivity.this)) {
-                            showGenerateCredit();
-                        }
-                    }
-                }
+                pressLayout();
+                devRentregaPer = 5;
+                break;
+            case R.id.check_btn_perfeito:
+                pressLayout();
+                devRentregaPer =1;
                 break;
             case R.id.toast_btn_confirm:
-                    if(devRentrega){
+                switch (devRentregaPer){
+                    case 4:
                         setUpNFDevRen(4,1);
-                    }else{
+                        break;
+                    case 5:
                         setUpNFDevRen(5,1);
-                    }
+                        break;
+                }
                 break;
             case R.id.toast_btn_dismiss:
-                if(devRentrega) {
-                    setUpNFDevRen(4,0);
-                }else{
-                    setUpNFDevRen(5,0);
+                switch (devRentregaPer){
+                    case 4:
+                        setUpNFDevRen(4,0);
+                        break;
+                    case 5:
+                        setUpNFDevRen(5,0);
+                        break;
                 }
                 break;
         }
@@ -188,8 +174,6 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         },2000);
     }
 
-
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if(v.getId()==R.id.check_master_layout){
@@ -216,7 +200,9 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
     public void setUpNFDevRen(final int stEnt, final int stCred){
         SingleShotLocationProvider.requestSingleUpdate(this, new SingleShotLocationProvider.LocationCallback() {
             @Override public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
-                alertDialog.dismiss();
+                if(devRentregaPer!=1){
+                    alertDialog.dismiss();
+                }
                 Methods.showLoadingDialog(CheckActivity.this);
                 //start new connetion to the database
                 dbConnection = new DBConnection(CheckActivity.this);
@@ -265,7 +251,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
     }
 
-    private void showEmailInvalidMsg(){
+    public void showEmailInvalidMsg(){
         View view = Methods.setToastView(CheckActivity.this,"",false,getString(R.string.invalid_email_format),
                 true,"",false,"",false);
         Toast toast = Toast.makeText(this, "", Toast.LENGTH_LONG);
@@ -273,25 +259,15 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         toast.show();
     }
 
-    private void pressLayout(boolean devRentrega){
-        isFinal = !isFinal;
-        startButton.setEnabled(false);
-        startButton.setBackgroundColor(getResources().getColor(R.color.grey_500));
-        if(devRentrega){
-            rentregaButton.setBackgroundColor(getResources().getColor(R.color.grey_500));
-            devButton.setText("Finalizar");
-        }else{
-            devButton.setBackgroundColor(getResources().getColor(R.color.grey_500));
-            rentregaButton.setText("Finalizar");
-        }
+    private void pressLayout(){
         RecordFrag recordFrag = new RecordFrag();
         outputFile = createGetDir(String.valueOf(nf_check_txtvw.getText()));
         Bundle args = new Bundle();
         args.putString("outputFile",outputFile);
         args.putString("email_cliente",email_cliente);
+        args.putInt("whitchActivity",0);
         recordFrag.setArguments(args);
         recordFrag.show(getSupportFragmentManager(),"TRANSPORTCHECK"+numnota);
-        //getSupportFragmentManager().beginTransaction().replace(R.id.check_recorder_replace,recordFrag).addToBackStack(null).commit();
     }
 
     private void showGenerateCredit(){
@@ -379,6 +355,20 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
             return false;
         } else {
             return true;
+        }
+    }
+
+    public void finalizar(){
+        if(email_cliente2!=null && !email_cliente2.trim().matches("") && !Methods.isValidEmail(email_cliente2)){
+            showEmailInvalidMsg();
+        }else{
+            if(checkGPSTurndOn(CheckActivity.this,CheckActivity.this)) {
+                if(devRentregaPer==1){
+                       setUpNFDevRen(1,0);
+                }else{
+                    showGenerateCredit();
+                }
+            }
         }
     }
 }

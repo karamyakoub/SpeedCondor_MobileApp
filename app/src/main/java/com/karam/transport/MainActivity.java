@@ -37,14 +37,27 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final String  TAG = getString(R.string.main_activity_tag);
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                   startActivity(intent);
-                    finish();
+        final String TAG = getString(R.string.main_activity_tag);
         //mSplashHandler = new Handler();
+        Dexter.withContext(this).withPermissions(Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
 
-
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
     }
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -53,7 +66,7 @@ public class MainActivity extends AppCompatActivity  {
         //if (gapTime > SPLASH_SCREEN_MS) {
         //    gapTime = SPLASH_SCREEN_MS;
         //}
-        //if(Build.VERSION.SDK_INT > 23){
+        //if(Build.VERSION.SDK_INT >= 23){
         //    Dexter.withContext(this).withPermissions(Manifest.permission.ACCESS_BACKGROUND_LOCATION,
         //            Manifest.permission.ACCESS_COARSE_LOCATION,
         //            Manifest.permission.ACCESS_FINE_LOCATION)
@@ -61,7 +74,7 @@ public class MainActivity extends AppCompatActivity  {
         //                @Override
         //                public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
         //                    //if(Methods.checkPlayServices(MainActivity.this,MainActivity.this)){
-        //                        setSplash();
+        //                        //setSplash();
         //                    //}
         //                    //if(multiplePermissionsReport.isAnyPermissionPermanentlyDenied()){
         //                    //    View view = Methods.setToastView(MainActivity.this,getString(R.string.permission_title),true,
@@ -76,6 +89,10 @@ public class MainActivity extends AppCompatActivity  {
         //                    //    alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         //                    //    alertDialog.show();
         //                    //}
+        //                    if (multiplePermissionsReport.areAllPermissionsGranted()){
+        //                        Intent intent = new Intent(MainActivity.this,LoginActivity.class);
+        //                        startActivity(intent);
+        //                    }
         //                }
         //                @Override
         //                public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
@@ -83,7 +100,7 @@ public class MainActivity extends AppCompatActivity  {
         //                }
         //            }).check();
         //}else{
-        //    setSplash();
+        //    //setSplash();
         //}
     }
     @Override

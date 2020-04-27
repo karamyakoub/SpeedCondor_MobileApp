@@ -52,7 +52,6 @@ public class NotasActivity extends AppCompatActivity {
         TAG = getString(R.string.notas_activity);
         notasHeaderLayout = findViewById(R.id.notas_tab_layout);
         notasListView = findViewById(R.id.notas_listvw);
-        btnFinalizar = findViewById(R.id.notas_finalizar_btn);
         notasCountTxtvw = findViewById(R.id.notas_count_txtvw);
         //add the tabs
         addtabs(this,notasHeaderLayout);

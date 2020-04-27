@@ -1,6 +1,7 @@
 package com.karam.transport;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -46,6 +47,7 @@ import java.util.Map;
 public class Methods {
     public static final String TAG ="METHODS";
     public static boolean isNetworkConnected= true;
+    public static AlertDialog loadingDialog;
 
     //Static method that will set the shared prefrences in this app
     public static void setSharedPref(@NonNull Context contex, @NonNull String type, @NonNull String name, @NonNull Object value){
@@ -402,8 +404,8 @@ public class Methods {
             try{
                 for(HashMap<String,String> map : prodMap){
                     prod = new Prod(longParser(map.get("CODPROD")),longParser(map.get("NUMNOTA")),longParser(map.get("QT")),
-                            null,longParser(map.get("CODBARRA1")),longParser(map.get("CODBARRA2")),null,0,map.get("DESCRICAO"));
-                    dbConnection.insertProd(prod,"CODMOTIVODEV",SQLiteDatabase.CONFLICT_IGNORE);
+                            0l,longParser(map.get("CODBARRA1")),longParser(map.get("CODBARRA2")),0,0,map.get("DESCRICAO"));
+                    dbConnection.insertProd(prod,null,SQLiteDatabase.CONFLICT_IGNORE);
                 }
             }catch (SQLiteException ex){
                 return ex.getMessage();
@@ -502,5 +504,17 @@ public class Methods {
                 }
             }
         }
+    }
+
+    public static void showLoadingDialog(Context context){
+        loadingDialog = new AlertDialog.Builder(context)
+                .setView(R.layout.load_layout)
+                .setCancelable(false)
+                .create();
+        loadingDialog.show();
+    }
+
+    public static void closeLoadingDialog(){
+        loadingDialog.dismiss();
     }
 }

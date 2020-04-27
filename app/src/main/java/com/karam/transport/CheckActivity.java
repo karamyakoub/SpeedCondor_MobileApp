@@ -204,8 +204,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onTaskFinish(String response) {
-        Log.i("karam", response);
-        if(response=="ok"){
+        if(response.trim().equals("ok")){
             nf.setStenvi(1);
         }
         //insert the nota into the local database
@@ -218,6 +217,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         SingleShotLocationProvider.requestSingleUpdate(this, new SingleShotLocationProvider.LocationCallback() {
             @Override public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
                 alertDialog.dismiss();
+                Methods.showLoadingDialog(CheckActivity.this);
                 //start new connetion to the database
                 dbConnection = new DBConnection(CheckActivity.this);
                 //set all the informatins to new nota fiscal
@@ -290,7 +290,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         args.putString("outputFile",outputFile);
         args.putString("email_cliente",email_cliente);
         recordFrag.setArguments(args);
-        getSupportFragmentManager().beginTransaction().replace(R.id.check_recorder_replace,recordFrag).addToBackStack(null).commit();
+        recordFrag.show(getSupportFragmentManager(),"TRANSPORTCHECK"+numnota);
+        //getSupportFragmentManager().beginTransaction().replace(R.id.check_recorder_replace,recordFrag).addToBackStack(null).commit();
     }
 
     private void showGenerateCredit(){
@@ -324,6 +325,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
             if(aBoolean == true){
                 //send atualization to the notas app
                 sendToBCRecNotas(nf);
+                //close the loading dialog
+                Methods.closeLoadingDialog();
                 //Close the dialog and the activity
                 finish();
             }else{

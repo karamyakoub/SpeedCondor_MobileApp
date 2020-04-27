@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkprod_layout"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBege_app">
@@ -202,7 +203,7 @@
         android:layout_marginTop="30dp"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:background="@color/blue_800"
+        android:background="@color/colorGrey_app"
         android:scaleType="fitXY"
         android:text="Registrar"/>
     <Button
@@ -215,7 +216,7 @@
         android:layout_marginBottom="25dp"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:background="@color/blue_800"
+        android:background="@color/colorGrey_app"
         android:scaleType="fitXY"
         android:text="Restaurar"/>
 </LinearLayout>

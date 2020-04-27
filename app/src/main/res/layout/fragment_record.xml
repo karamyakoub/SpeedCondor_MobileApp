@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     android:id="@+id/record_layout"
     android:orientation="vertical"
-    android:background="@drawable/plate_rect"
+    android:background="@color/colorBege_app"
     android:layout_marginTop="5dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <TextView

@@ -19,7 +19,7 @@
     <string name="notas_status_emtransito">Em trânsito</string>
     <string name="notas_status_emconferencia">Em conferência</string>
     <string name="notas_status_reentrega">Re-entrega</string>
-    <string name="conferencia_start_title">escolhe uma opção</string>
+    <string name="conferencia_start_title">CONFÊRENCIA</string>
     <string name="conferencia_button_start">Conferir Mercadoria</string>
     <string name="conferencia_button_dev">Devolução total</string>
     <string name="record_hold_message">Segure para gravar</string>
@@ -39,7 +39,7 @@
     <string name="save_nfdevren_error">Aconteceu um erro em gravação, tente de novo</string>
     <string name="check_prod_missing_info">Valores errados</string>
     //_____________________________________URLS
-    <string name="url_server_host">http://192.168.137.1/pendencia/php_app/</string>
+    <string name="url_server_host">http://10.0.2.2/pendencia/php_app/</string>
     <string name="url_server_login">Login.php</string>
     <string name="url_server_load_carreg">LoadByCarga.php</string>
     <string name="url_server_save_notadevren">SaveNotaDevRen.php</string>

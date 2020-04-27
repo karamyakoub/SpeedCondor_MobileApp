@@ -31,7 +31,7 @@
         android:textSize="17sp"
         android:gravity="center"
         android:maxLines="5"
-        android:textColor="@color/blue_900"/>
+        android:textColor="@color/white"/>
     <LinearLayout
         android:id="@+id/toast_btns_container"
         android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             android:textSize="14sp"
             android:textAlignment="center"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:background="@drawable/rect_btn_selector"
 
             android:alpha="0.9"/>
@@ -62,7 +62,7 @@
             android:textSize="14sp"
             android:textAlignment="center"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:background="@drawable/rect_btn_selector"
             android:alpha="0.9"/>
     </LinearLayout>

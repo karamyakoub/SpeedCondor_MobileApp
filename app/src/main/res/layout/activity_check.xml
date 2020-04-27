@@ -181,7 +181,7 @@
                 android:textColor="@color/white"
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="20sp"
-                android:background="@color/blue_800"
+                android:background="@color/colorGrey_app"
                 android:scaleType="fitXY"
                 android:text="@string/conferencia_button_start"/>
             <Button
@@ -195,7 +195,7 @@
                 android:layout_gravity="center"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:background="@color/blue_800"
+                android:background="@color/colorGrey_app"
                 android:scaleType="fitXY"
                 android:text="@string/conferencia_button_dev"/>
             <Button
@@ -210,7 +210,7 @@
                 android:layout_gravity="center"
                 android:textColor="@color/white"
                 android:textSize="20sp"
-                android:background="@color/blue_800"
+                android:background="@color/colorGrey_app"
                 android:scaleType="fitXY"
                 android:text="Re-entrega"/>
         </LinearLayout>

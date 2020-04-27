@@ -3,9 +3,11 @@ package com.karam.transport;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -21,7 +24,7 @@ import android.widget.Toast;
 
 import java.nio.charset.MalformedInputException;
 
-public class CheckProdActivity extends AppCompatActivity implements View.OnClickListener, RadioButton.OnCheckedChangeListener  {
+public class CheckProdActivity extends AppCompatActivity implements View.OnClickListener, RadioButton.OnCheckedChangeListener, View.OnTouchListener {
     long codprod;
     long qt;
     String descricao;
@@ -32,8 +35,9 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
     EditText qtpend_edittxt;
     TextView codProd_txtvw,des_txtvw,qt_txtvw;
     String[] motivoDes;
-    int pos;
+    int pos=0;
     DBConnection dbConnection;
+    LinearLayout layoutContainer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +53,7 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
         qtpend_edittxt = findViewById(R.id.checkProd_qtpend_edittxt);
         radDev = findViewById(R.id.checkprod_dev_rad);
         radPen = findViewById(R.id.checkprod_pend_rad);
-
+        layoutContainer = findViewById(R.id.checkprod_layout);
         //get variables the products activity
         Intent myIntent =this.getIntent();
         codprod = myIntent.getLongExtra("codprod",0);
@@ -63,6 +67,7 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
         resetBtn.setOnClickListener(this);
         radPen.setOnCheckedChangeListener(this);
         radDev.setOnCheckedChangeListener(this);
+        layoutContainer.setOnTouchListener(this);
     }
 
     private void setUpSpinner(){
@@ -122,7 +127,7 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
                     if(checkInsertProd){
                         Intent intent = new Intent("GETPRODCHANGES");
                         intent.putExtra("qtpend",prod.getQtfalta());
-                        intent.putExtra("codMotivoDev",pos);
+                        intent.putExtra("codMotivoDev",prod.getCodmotivodev());
                         intent.putExtra("status",prod.getStdev());
                         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                         finish();
@@ -148,7 +153,19 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
                 prod.setQtfalta(null);
                 prod.setCodmotivodev(null);
                 prod.setStdev(null);
-
+                SQLiteDatabase db = dbConnection.getWritableDatabase();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("QTFALTA",0l);
+                contentValues.put("CODMOTIVO",0);
+                contentValues.put("STDEV",0);
+                db.update("PROD",contentValues,"NUMNOTA=? and CODPROD=?",new String[]{
+                        String.valueOf(numnota),String.valueOf(codprod)});
+                Intent intent = new Intent("GETPRODCHANGES");
+                intent.putExtra("qtpend",prod.getQtfalta());
+                intent.putExtra("codMotivoDev",prod.getCodmotivodev());
+                intent.putExtra("status",prod.getStdev());
+                LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+                finish();
         }
     }
 
@@ -159,5 +176,13 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
         }else if(buttonView.getId() == R.id.checkprod_dev_rad){
             motivo = false;
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(v.getId()==R.id.checkprod_layout){
+            Methods.CloseSoftKeyboradOnTouch(this);
+        }
+        return true;
     }
 }

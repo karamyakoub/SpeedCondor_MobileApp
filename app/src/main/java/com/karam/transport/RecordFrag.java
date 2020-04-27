@@ -31,6 +31,8 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
@@ -41,7 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class RecordFrag extends Fragment implements View.OnClickListener , View.OnTouchListener {
+public class RecordFrag extends BottomSheetDialogFragment implements View.OnClickListener , View.OnTouchListener {
     TextView timerTxtvw,emailTxtVw;
     EditText obsEditTxt,emailEditTxt;
     Button recordBtn,deleteBtn,playBtn;

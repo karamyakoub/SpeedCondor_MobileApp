@@ -8,10 +8,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -152,9 +154,31 @@ public class ProdutosActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.prod_menu_barcode:
-                Intent intent = new Intent(this,BarcodeActivity.class);
-                intent.putExtra("chooser","prod");
-                startActivity(intent);
+                Intent intent3 = new Intent(this,BarcodeActivity.class);
+                intent3.putExtra("chooser","prod");
+                startActivity(intent3);
+                break;
+            case R.id.prod_menu_cancelar:
+                DBConnection dbConnection = new DBConnection(this);
+                Prod prod = new Prod();
+                numnota =(long) Methods.getSharedPref(this,"long",getString(R.string.SHnota));
+                prod.setQtfalta(null);
+                prod.setCodmotivodev(null);
+                prod.setStdev(null);
+                SQLiteDatabase db = dbConnection.getWritableDatabase();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put("QTFALTA",0l);
+                contentValues.put("CODMOTIVO",0);
+                contentValues.put("STDEV",0);
+                db.update("PROD",contentValues,"NUMNOTA=?",new String[]{
+                        String.valueOf(numnota)});
+                Methods.setSharedPref(this,"long",getString(R.string.SHnota),0l);
+                finish();
+                Intent intentNF = new Intent(this,NotasActivity.class);
+                startActivity(intentNF);
+                break;
+            case R.id.prod_menu_finalizar:
+                break;
         }
         return true;
     }
@@ -191,7 +215,7 @@ public class ProdutosActivity extends AppCompatActivity{
             Long numnota = longs[0];
             prodList = new ArrayList<>();
             Cursor c = dbConnection.select(false, "PROD", new String[]{
-                            "CODPROD", "QT","QTFALTA","STDEV", "CODBARRA1", "CODBARRA2", "DESCRICAO"},
+                            "CODPROD", "QT","QTFALTA","STDEV", "CODBARRA1", "CODBARRA2", "DESCRICAO","CODMOTIVO"},
                     "NUMNOTA=?", new String[]{String.valueOf(numnota)}
                     , null, null, "DESCRICAO", null);
             if (c != null) {
@@ -206,6 +230,7 @@ public class ProdutosActivity extends AppCompatActivity{
                         prod.setDescricao(c.getString(c.getColumnIndex("DESCRICAO")));
                         prod.setQtfalta(c.getLong(c.getColumnIndex("QTFALTA")));
                         prod.setStdev(c.getInt(c.getColumnIndex("STDEV")));
+                        prod.setCodmotivodev(c.getInt(c.getColumnIndex("CODMOTIVO")));
                     } catch (NumberFormatException ex) {
 
                     }

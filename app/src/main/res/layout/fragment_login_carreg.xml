@@ -85,7 +85,7 @@
             android:layout_gravity="center"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:background="@color/blue_800"
+            android:background="@color/colorGrey_app"
             android:scaleType="fitXY"
             android:text="@string/carreg_button_text"/>
 

@@ -22,25 +22,6 @@
             app:tabIndicatorColor="@color/colorOrange_app"
             app:tabIndicatorFullWidth="false">
         </com.google.android.material.tabs.TabLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/notas_finalizar_btn"
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:textSize="18sp"
-                android:background="@drawable/rect_btn_selector"
-                android:scaleType="fitXY"
-                android:text="@string/notas_button_finalizar_text" />
-        </LinearLayout>
         <TextView
             android:id="@+id/notas_count_txtvw"
             android:layout_width="match_parent"
@@ -53,7 +34,8 @@
             android:background="@color/colorGrey_app"
             android:textStyle="bold"
             android:textAlignment="textEnd"
-            android:text="21 encomandas"
+            android:translationZ="2dp"
+            android:elevation="2dp"
             android:fontFamily="sans-serif-condensed-light"/>
 
         <ListView

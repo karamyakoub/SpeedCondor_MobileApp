@@ -1,6 +1,7 @@
 package com.karam.transport;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +58,7 @@ public class ProdAdapter extends BaseAdapter implements Filterable {
         desprod_txtvw.setText(items.get(position).getDescricao());
         qt_txtvw.setText(String.valueOf(items.get(position).getQt()));
         qt_pend_txtvw.setText((items.get(position).getQtfalta()!=null)?String.valueOf(items.get(position).getQtfalta()):"");
-        String []arrCod = context.getResources().getStringArray(R.array.motivos_dev_cod);
+        String[] arrCod = context.getResources().getStringArray(R.array.motivos_dev_cod);
         String[] arrMot = context.getResources().getStringArray(R.array.motivos_dev_des);
 
         int x =0 ;
@@ -67,7 +68,7 @@ public class ProdAdapter extends BaseAdapter implements Filterable {
                 break;
             }
         }
-        motivo_txtvw.setText((items.get(position).getCodmotivodev())!=null?arrMot[x]:"");
+        motivo_txtvw.setText(items.get(position).getCodmotivodev()!=0 ?arrMot[x]:"");
         if(items.get(position).getStdev()!=null){
             switch (items.get(position).getStdev()){
                 case 0:

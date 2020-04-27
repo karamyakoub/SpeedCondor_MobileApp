@@ -154,7 +154,9 @@
         android:textAlignment="textEnd"
         android:paddingRight="10dp"
         android:layout_height="20dp"
-        android:background="@color/colorGrey_app"/>
+        android:background="@color/colorGrey_app"
+        android:translationZ="3dp"
+        android:elevation="5dp"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

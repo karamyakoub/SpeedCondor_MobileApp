@@ -231,8 +231,8 @@ public class NotasActivity extends AppCompatActivity {
             Long numcarga = longs[0];
             nfList = new ArrayList<>();
             Cursor c = dbConnection.select(false, "NF", new String[]{"NUMNOTA", "CODCLI", "CLIENTE", "EMAIL_CLIENTE", "STENT", "STPEND", "UF", "CIDADE", "ENDERECO", "CEP",
-                            "BAIRRO", "OBS1", "OBS2", "OBS3","DTENT"},
-                    "NUMCAR=?", new String[]{String.valueOf(numcarga)}
+                            "BAIRRO", "OBS1", "OBS2", "OBS3","DTENT","PENDCODPROCESS","PENDDTENT","PENDOBS","PENDLAT","PENDLONGT"},
+                    "NUMCAR=? OR STPEND = 1", new String[]{String.valueOf(numcarga)}
                     , null, null, "CLIENTE", null);
             if (c != null) {
                 c.moveToFirst();
@@ -244,6 +244,9 @@ public class NotasActivity extends AppCompatActivity {
                         nf.setCliente(c.getString(c.getColumnIndex("CLIENTE")));
                         nf.setStent(c.getInt(c.getColumnIndex("STENT")));
                         nf.setStpend(c.getInt(c.getColumnIndex("STPEND")));
+                        nf.setPendcodprocess(c.getLong(c.getColumnIndex("PENDCODPROCESS")));
+                        nf.setPendlat(c.getFloat(c.getColumnIndex("PENDLAT")));
+                        nf.setPendlongt(c.getFloat(c.getColumnIndex("PENDLONGT")));
                     } catch (NumberFormatException ex) {
                     }
                     nf.setUf(c.getString(c.getColumnIndex("UF")));
@@ -256,6 +259,8 @@ public class NotasActivity extends AppCompatActivity {
                     nf.setEndereco(c.getString(c.getColumnIndex("ENDERECO")));
                     nf.setEmail_cliente(c.getString(c.getColumnIndex("EMAIL_CLIENTE")));
                     nf.setDtent(c.getString(c.getColumnIndex("DTENT")));
+                    nf.setPendobs(c.getString(c.getColumnIndex("PENDOBS")));
+                    nf.setPenddtent(c.getString(c.getColumnIndex("PENDDTENT")));
                     nfList.add(nf);
                     c.moveToNext();
                 }

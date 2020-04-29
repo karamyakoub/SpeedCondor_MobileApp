@@ -174,12 +174,12 @@ public class DBConnection extends SQLiteOpenHelper {
             contentValues.put("LONGTENT",nf.getLongtent());
         }
 
-        if(nf.getLatdev()!=null){
-            contentValues.put("LATDEV",nf.getLatdev());
+        if(nf.getPendlat()!=null){
+            contentValues.put("PENDLAT",nf.getPendlat());
         }
 
-        if(nf.getLongtdev()!=null){
-            contentValues.put("LONGTDEV",nf.getLongtdev());
+        if(nf.getPendlongt()!=null){
+            contentValues.put("PENDLONGT",nf.getPendlongt());
         }
 
         if(nf.getEmail_cliente()!=null){
@@ -202,6 +202,15 @@ public class DBConnection extends SQLiteOpenHelper {
         }
         if(nf.getCep()!=null){
             contentValues.put("CEP",nf.getCep());
+        }
+        if(nf.getPendcodprocess()!=null){
+            contentValues.put("PENDCODPROCESS",nf.getPendcodprocess());
+        }
+        if(nf.getPenddtent()!=null){
+            contentValues.put("PENDDTENT",nf.getPenddtent());
+        }
+        if(nf.getPendobs()!=null){
+            contentValues.put("PENDOBS",nf.getPendobs());
         }
         long affectedRows = db.insertWithOnConflict("NF",column,contentValues,conflictAlgorithm);
         if(affectedRows>-1){
@@ -290,12 +299,12 @@ public class DBConnection extends SQLiteOpenHelper {
             contentValues.put("LONGTENT",nf.getLongtent());
         }
 
-        if(nf.getLatdev()!=null){
-            contentValues.put("LATDEV",nf.getLatdev());
+        if(nf.getPendlat()!=null){
+            contentValues.put("PENDLAT",nf.getPendlat());
         }
 
-        if(nf.getLongtdev()!=null){
-            contentValues.put("LONGTDEV",nf.getLongtdev());
+        if(nf.getPendlongt()!=null){
+            contentValues.put("PENDLONGT",nf.getPendlongt());
         }
 
         if(nf.getEmail_cliente()!=null){
@@ -319,6 +328,16 @@ public class DBConnection extends SQLiteOpenHelper {
         if(nf.getCep()!=null){
             contentValues.put("CEP",nf.getCep());
         }
+        if(nf.getPendcodprocess()!=null){
+            contentValues.put("PENDCODPROCESS",nf.getPendcodprocess());
+        }
+        if(nf.getPenddtent()!=null){
+            contentValues.put("PENDDTENT",nf.getPenddtent());
+        }
+        if(nf.getPendobs()!=null){
+            contentValues.put("PENDOBS",nf.getPendobs());
+        }
+
         long affectedRows = db.update("NF",contentValues,whereClause,whereValues);
         if(affectedRows>-1){
             return true;
@@ -361,6 +380,12 @@ public class DBConnection extends SQLiteOpenHelper {
         }
         if(prod.getCodbarra2()!=null){
             contentValues.put("CODBARRA2",prod.getCodbarra2());
+        }
+        if(prod.getPendqt()!=null){
+            contentValues.put("PENDQT",prod.getPendqt());
+        }
+        if(prod.getPendcodmotivo()!=null){
+            contentValues.put("PENDCODMOTIVO",prod.getPendcodmotivo());
         }
         long affectedRows = db.insertWithOnConflict("PROD",column,contentValues,conflictAlgorithm);
         if(affectedRows>-1){

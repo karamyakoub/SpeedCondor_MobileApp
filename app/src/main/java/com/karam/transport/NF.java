@@ -1,10 +1,34 @@
 package com.karam.transport;
 
 public class NF {
-    Long numnota, numcar, codcli, codusur;
-    String cliente, email_cliente,email_cliene2, uf, ciddade, bairro, obs1, obs2, obs3, obsentrega, rca, email_rca, dtent,endereco,cep;
-    Float latent, longtent, latdev, longtdev;
+    Long numnota, numcar, codcli, codusur,pendcodprocess;
+    String cliente, email_cliente,email_cliene2, uf, ciddade, bairro, obs1, obs2, obs3, obsentrega, rca, email_rca, dtent,penddtent,endereco,cep,pendobs;
+    Float latent, longtent, pendlat, pendlongt;
     Integer stenvi, stent, stpend,stcred;
+
+    public Long getPendcodprocess() {
+        return pendcodprocess;
+    }
+
+    public void setPendcodprocess(Long pendcodprocess) {
+        this.pendcodprocess = pendcodprocess;
+    }
+
+    public String getPenddtent() {
+        return penddtent;
+    }
+
+    public void setPenddtent(String penddtent) {
+        this.penddtent = penddtent;
+    }
+
+    public String getPendobs() {
+        return pendobs;
+    }
+
+    public void setPendobs(String pendobs) {
+        this.pendobs = pendobs;
+    }
 
     public NF(){}
 
@@ -12,7 +36,7 @@ public class NF {
               String cliente, String email_cliente,String email_cliene2, String uf, String ciddade,
               String bairro, String obs1, String obs2, String obs3, String obsentrega,
               String rca, String email_rca, String dtent, Float latent, Float longtent,
-              Float latdev, Float longtdev, Integer stenvi, Integer stent, Integer stpend,Integer stcred,String endereco,String cep) {
+              Float pendlat, Float pendlongt, Integer stenvi, Integer stent, Integer stpend,Integer stcred,String endereco,String cep) {
         this.numnota = numnota;
         this.numcar = numcar;
         this.codcli = codcli;
@@ -32,8 +56,8 @@ public class NF {
         this.dtent = dtent;
         this.latent = latent;
         this.longtent = longtent;
-        this.latdev = latdev;
-        this.longtdev = longtdev;
+        this.pendlat = pendlat;
+        this.pendlongt = pendlongt;
         this.stenvi = stenvi;
         this.stent = stent;
         this.stpend = stpend;
@@ -41,6 +65,48 @@ public class NF {
         this.endereco = endereco;
         this.cep = cep;
     }
+
+    public NF(Long numnota, Long numcar, Long codcli, Long codusur,
+              String cliente, String email_cliente,String email_cliene2, String uf, String ciddade,
+              String bairro, String obs1, String obs2, String obs3, String obsentrega,
+              String rca, String email_rca, String dtent, Float latent, Float longtent,
+              Float pendlat, Float pendlongt, Integer stenvi, Integer stent, Integer stpend,
+              Integer stcred,String endereco,String cep,Long pendcodprocess,
+              String penddtent,String pendobs) {
+        this.numnota = numnota;
+        this.numcar = numcar;
+        this.codcli = codcli;
+        this.codusur = codusur;
+        this.cliente = cliente;
+        this.email_cliente = email_cliente;
+        this.email_cliene2 = email_cliene2;
+        this.uf = uf;
+        this.ciddade = ciddade;
+        this.bairro = bairro;
+        this.obs1 = obs1;
+        this.obs2 = obs2;
+        this.obs3 = obs3;
+        this.obsentrega = obsentrega;
+        this.rca = rca;
+        this.email_rca = email_rca;
+        this.dtent = dtent;
+        this.latent = latent;
+        this.longtent = longtent;
+        this.pendlat = pendlat;
+        this.pendlongt = pendlongt;
+        this.stenvi = stenvi;
+        this.stent = stent;
+        this.stpend = stpend;
+        this.stcred = stcred;
+        this.endereco = endereco;
+        this.cep = cep;
+        this.pendcodprocess = pendcodprocess;
+        this.pendobs = pendobs;
+        this.penddtent = penddtent;
+    }
+
+
+
 
     public Integer getStcred() {
         return stcred;
@@ -218,20 +284,21 @@ public class NF {
         this.longtent = longtent;
     }
 
-    public Float getLatdev() {
-        return latdev;
+
+    public Float getPendlat() {
+        return pendlat;
     }
 
-    public void setLatdev(Float latdev) {
-        this.latdev = latdev;
+    public void setPendlat(Float pendlat) {
+        this.pendlat = pendlat;
     }
 
-    public Float getLongtdev() {
-        return longtdev;
+    public Float getPendlongt() {
+        return pendlongt;
     }
 
-    public void setLongtdev(Float longtdev) {
-        this.longtdev = longtdev;
+    public void setPendlongt(Float pendlongt) {
+        this.pendlongt = pendlongt;
     }
 
     public Integer getStenvi() {

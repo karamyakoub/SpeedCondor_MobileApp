@@ -30,9 +30,15 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.internal.clearcut.zzcn;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -197,21 +203,21 @@ public class Methods {
         while (it.hasNext()) {
             if(map.size() != 1){
                 Map.Entry pair = (Map.Entry)it.next();
-                result.append(URLEncoder.encode(pair.getKey().toString(), "UTF-8"));
+                result.append(URLEncoder.encode(String.valueOf(pair.getKey()), "UTF-8"));
                 result.append("=");
-                result.append(URLEncoder.encode(pair.getValue().toString(), "UTF-8"));
+                result.append(URLEncoder.encode(String.valueOf(pair.getValue()), "UTF-8"));
                 result.append("&");
                 it.remove(); // avoids a ConcurrentModificationException
             }else {
                 Map.Entry pair = (Map.Entry)it.next();
                 //System.out.println(pair.getKey() + " = " + pair.getValue());
-                result.append(URLEncoder.encode(pair.getKey().toString(), "UTF-8"));
+                result.append(URLEncoder.encode(String.valueOf(pair.getKey()), "UTF-8"));
                 result.append("=");
-                result.append(URLEncoder.encode(pair.getValue().toString(), "UTF-8"));
+                result.append(URLEncoder.encode(String.valueOf(pair.getValue()), "UTF-8"));
                 it.remove(); // avoids a ConcurrentModificationException
             }
         }
-        return result.toString();
+        return String.valueOf(result);
     }
 
     //function to return an array of the keys of returned array from the sql
@@ -222,7 +228,7 @@ public class Methods {
 
             while ((it.hasNext())) {
                 Map.Entry pairs = (Map.Entry) it.next();
-                header.add(pairs.getKey().toString());
+                header.add(String.valueOf(pairs.getKey()));
             }
 
             return header;
@@ -274,6 +280,10 @@ public class Methods {
         }catch (Exception ex){
 
         }
+    }
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 
@@ -339,11 +349,11 @@ public class Methods {
     }
 
 
-    public static Long longParser(String input){
-        try{
+    public static Long longParser(String input) {
+        try {
             Long output = Long.parseLong(input);
             return output;
-        }catch(NumberFormatException ex){
+        } catch (Exception ex) {
             return null;
         }
     }
@@ -395,7 +405,7 @@ public class Methods {
                             map.get("BAIRRO"),map.get("OBS1"),map.get("OBS2"),map.get("OBS3"),
                             null,map.get("RCA"),map.get("EMAIL_RCA"),null,null,null,
                             null,null,0,0,0,null,map.get("ENDERECO"),map.get("CEP"));
-                    dbConnection.insertNF(nf,"OBSINTREGA,DTENT,LATENT,LONGTENT,LATDEV,LONGTDEV",SQLiteDatabase.CONFLICT_REPLACE);
+                    dbConnection.insertNF(nf,"OBSINTREGA,DTENT,LATENT,LONGTENT,PENDLAT,PENDLONGT",SQLiteDatabase.CONFLICT_REPLACE);
                 }
             }catch (SQLiteException ex){
                 return ex.getMessage();
@@ -420,6 +430,40 @@ public class Methods {
             prodMap=null;
             prod = null;
             //here should add the part of nota de devolução
+            List<HashMap<String,String>> nfMapPend = toList((mapCNPD.get("NFPEND")));
+            if(nfMapPend!= null && nfMapPend.size()>0){
+                NF nfpend ;
+                try{
+                    for(HashMap<String,String> map : nfMapPend){
+                        nfpend=new NF(longParser(map.get("NUMNOTA")),longParser(map.get("NUMCAR")),
+                                longParser(map.get("CODCLI")),longParser(map.get("CODUSUR")),
+                                map.get("CLIENTE"),map.get("EMAIL_CLIENTE"),map.get("EMAIL_CLIENTE2"),map.get("UF"),map.get("CIDADE"),
+                                map.get("BAIRRO"),map.get("OBS1"),map.get("OBS2"),map.get("OBS3"),
+                                null,map.get("RCA"),map.get("EMAIL_RCA"),null,null,null,
+                                FloatParser(map.get("PENDLAT")),FloatParser(map.get("PENDLONGT")),0,0,1,null,map.get("ENDERECO"),map.get("CEP"),
+                                longParser(map.get("CODPROCESS")),map.get("DTENTREGA"),map.get("OBSENT"));
+                        dbConnection.insertNF(nfpend,"OBSINTREGA,DTENT,LATENT,PENDLONGT",SQLiteDatabase.CONFLICT_REPLACE);
+                    }
+                }catch (SQLiteException ex){
+                    return ex.getMessage();
+                }
+
+                //clean the memory
+                nf =null;
+                nfMap=null;
+                Prod prodPend;
+                List<HashMap<String,String>> prodMapPend = toList((mapCNPD.get("PRODPEND")));
+                try{
+                    for(HashMap<String,String> map : prodMapPend){
+                        prodPend = new Prod(longParser(map.get("CODPROD")),longParser(map.get("NUMNOTA")),longParser(map.get("QT")),
+                                0l,longParser(map.get("CODBARRA1")),longParser(map.get("CODBARRA2")),0,0,map.get("DESCRICAO")
+                                ,longParser(map.get("QTFALTA")),integerParser(map.get("CODMOTIVO")));
+                        dbConnection.insertProd(prodPend,null,SQLiteDatabase.CONFLICT_IGNORE);
+                    }
+                }catch (SQLiteException ex){
+                    return ex.getMessage();
+                }
+            }
 
             //check the maximum number of saved carga and delete the older if the number is 5
             Cursor c = null;
@@ -566,4 +610,13 @@ public class Methods {
             return true;
         }
     }
+
+    public static void showEmailInvalidMsg(Activity activity){
+        View view = Methods.setToastView(activity,"",false,activity.getString(R.string.invalid_email_format),
+                true,"",false,"",false);
+        Toast toast = Toast.makeText(activity, "", Toast.LENGTH_LONG);
+        toast.setView(view);
+        toast.show();
+    }
+
 }

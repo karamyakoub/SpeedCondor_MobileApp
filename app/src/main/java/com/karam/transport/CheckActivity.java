@@ -102,35 +102,22 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.check_btn_dev:
                 pressLayout();
-                devRentregaPer = 4;
+                devRentregaPer = 3;
                 break;
             case R.id.check_btn_rentrega:
                 pressLayout();
-                devRentregaPer = 5;
+                devRentregaPer = 4;
+
                 break;
             case R.id.check_btn_perfeito:
                 pressLayout();
                 devRentregaPer =1;
                 break;
             case R.id.toast_btn_confirm:
-                switch (devRentregaPer){
-                    case 4:
-                        setUpNFDevRen(4,1);
-                        break;
-                    case 5:
-                        setUpNFDevRen(5,1);
-                        break;
-                }
+                setUpNFDevRen(3,1);
                 break;
             case R.id.toast_btn_dismiss:
-                switch (devRentregaPer){
-                    case 4:
-                        setUpNFDevRen(4,0);
-                        break;
-                    case 5:
-                        setUpNFDevRen(5,0);
-                        break;
-                }
+                setUpNFDevRen(3,0);
                 break;
         }
     }
@@ -200,7 +187,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
     public void setUpNFDevRen(final int stEnt, final int stCred){
         SingleShotLocationProvider.requestSingleUpdate(this, new SingleShotLocationProvider.LocationCallback() {
             @Override public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
-                if(devRentregaPer!=1){
+                if(devRentregaPer!=1 && devRentregaPer!=4){
                     alertDialog.dismiss();
                 }
                 Methods.showLoadingDialog(CheckActivity.this);
@@ -211,8 +198,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 nf.setNumnota(Methods.longParser(nf_check_txtvw.getText().toString()));nf.setEmail_cliene2((email_cliente2!=null)?email_cliente2:"");
                 nf.setObsentrega((obs!=null)?obs:"");
                 nf.setDtent(Methods.getCurrentDate());
-                nf.setLatent(Methods.roundFloat(location.latitude,4));
-                nf.setLongtent(Methods.roundFloat(location.longitude,4));
+                nf.setLatent(Methods.roundFloat(location.latitude,6));
+                nf.setLongtent(Methods.roundFloat(location.longitude,6));
                 nf.setStenvi(0);
                 nf.setStent(stEnt);
                 nf.setStcred(stCred);
@@ -251,13 +238,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
     }
 
-    public void showEmailInvalidMsg(){
-        View view = Methods.setToastView(CheckActivity.this,"",false,getString(R.string.invalid_email_format),
-                true,"",false,"",false);
-        Toast toast = Toast.makeText(this, "", Toast.LENGTH_LONG);
-        toast.setView(view);
-        toast.show();
-    }
+
 
     private void pressLayout(){
         RecordFrag recordFrag = new RecordFrag();
@@ -315,58 +296,23 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public static boolean checkGPSTurndOn(Context context, final Activity activity) {
-        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-        boolean network_enabled = false;
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-        }
 
-        try {
-            network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
-        }
-
-        if (!gps_enabled && !network_enabled) {
-            View view = Methods.setToastView(activity, "", false, context.getString(R.string.gps_notEnables)
-                    , true, "Configurações", true, "Fechar", true);
-            final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                    .setView(view).create();
-            Button btnConfirm = view.findViewById(R.id.toast_btn_confirm);
-            btnConfirm.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    activity.startActivity(intent);
-                }
-            });
-            Button btnCancel = view.findViewById(R.id.toast_btn_dismiss);
-            btnCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    alertDialog.dismiss();
-                }
-            });
-
-            alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            alertDialog.show();
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     public void finalizar(){
         if(email_cliente2!=null && !email_cliente2.trim().matches("") && !Methods.isValidEmail(email_cliente2)){
-            showEmailInvalidMsg();
+            Methods.showEmailInvalidMsg(CheckActivity.this);
         }else{
-            if(checkGPSTurndOn(CheckActivity.this,CheckActivity.this)) {
-                if(devRentregaPer==1){
-                       setUpNFDevRen(1,0);
-                }else{
-                    showGenerateCredit();
+            if(Methods.checkGPSTurndOn(CheckActivity.this,CheckActivity.this)) {
+                switch (devRentregaPer) {
+                    case 1:
+                        setUpNFDevRen(1, 0);
+                        break;
+                    case 3:
+                        showGenerateCredit();
+                        break;
+                    case 4:
+                        setUpNFDevRen(4, 0);
+                        break;
                 }
             }
         }

@@ -17,7 +17,6 @@ public class ProdAdapter extends BaseAdapter implements Filterable {
     ArrayList<Prod> items;
     ArrayList<Prod> temp_items;
     CustomFilter customFilter;
-
     public ProdAdapter(Context context,ArrayList<Prod> items){
         this.context = context;
         this.items = items;
@@ -56,7 +55,12 @@ public class ProdAdapter extends BaseAdapter implements Filterable {
 
         codprod_txtvw.setText(String.valueOf(items.get(position).getCodprod()));
         desprod_txtvw.setText(items.get(position).getDescricao());
-        qt_txtvw.setText(String.valueOf(items.get(position).getQt()));
+        if(items.get(position).getPendqt()!=null && items.get(position).getPendqt()>0){
+            qt_txtvw.setText(String.valueOf(items.get(position).getPendqt()));
+        }else{
+            qt_txtvw.setText(String.valueOf(items.get(position).getQt()));
+        }
+
         qt_pend_txtvw.setText((items.get(position).getQtfalta()!=null)?String.valueOf(items.get(position).getQtfalta()):"");
         String[] arrCod = context.getResources().getStringArray(R.array.motivos_dev_cod);
         String[] arrMot = context.getResources().getStringArray(R.array.motivos_dev_des);

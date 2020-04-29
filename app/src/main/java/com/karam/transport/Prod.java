@@ -1,8 +1,8 @@
 package com.karam.transport;
 
 public class Prod {
-    Long codprod,numnota,qt,qtfalta,codbarra1,codbarra2;
-    Integer codmotivodev,stdev;
+    Long codprod,numnota,qt,qtfalta,codbarra1,codbarra2,pendqt;
+    Integer codmotivodev,stdev,pendcodmotivo;
     String descricao;
     public Prod(){}
 
@@ -17,6 +17,37 @@ public class Prod {
         this.stdev = stdev;
         this.descricao = descricao;
         this.qtfalta = qtfalta;
+    }
+
+    public Prod(Long codprod, Long numnota, Long qt,Long qtfalta, Long codbarra1, Long codbarra2, Integer codmotivodev, Integer stdev, String descricao,Long pendqt,Integer pendcodmotivo) {
+        this.codprod = codprod;
+        this.numnota = numnota;
+        this.qt = qt;
+        this.codbarra1 = codbarra1;
+        this.codbarra2 = codbarra2;
+        this.codmotivodev = codmotivodev;
+        this.stdev = stdev;
+        this.descricao = descricao;
+        this.qtfalta = qtfalta;
+        this.pendqt = pendqt;
+        this.pendcodmotivo = pendcodmotivo;
+    }
+
+
+    public Long getPendqt() {
+        return pendqt;
+    }
+
+    public void setPendqt(Long pendqt) {
+        this.pendqt = pendqt;
+    }
+
+    public Integer getPendcodmotivo() {
+        return pendcodmotivo;
+    }
+
+    public void setPendcodmotivo(Integer pendcodmotivo) {
+        this.pendcodmotivo = pendcodmotivo;
     }
 
     public Long getQtfalta() {

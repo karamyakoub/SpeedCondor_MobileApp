@@ -68,17 +68,17 @@ public class NFAdapter extends BaseAdapter implements Filterable {
                 status_txtvw.setText(activity.getString(R.string.notas_status_Entregue));
                 checkinBtn.setVisibility(View.INVISIBLE);
                 break;
-            case 3:
+            case 2:
                 status_imgvw.setImageResource(R.drawable.stent_pend);
                 status_txtvw.setText(activity.getString(R.string.notas_status_Entregue_pend));
                 checkinBtn.setVisibility(View.INVISIBLE);
                 break;
-            case 4:
+            case 3:
                 status_imgvw.setImageResource(R.drawable.stent_dev);
                 status_txtvw.setText(activity.getString(R.string.notas_status_Entregue_dev));
                 checkinBtn.setVisibility(View.INVISIBLE);
                 break;
-            case 5:
+            case 4:
                 status_imgvw.setImageResource(R.drawable.stent_rentrega);
                 status_txtvw.setText(activity.getString(R.string.notas_status_reentrega));
                 checkinBtn.setVisibility(View.INVISIBLE);
@@ -109,6 +109,11 @@ public class NFAdapter extends BaseAdapter implements Filterable {
                 arr.add("OBS1: "+items.get(position).getObs1());
                 arr.add("OBS2: "+items.get(position).getObs2());
                 arr.add("OBS3: "+items.get(position).getObs3());
+                if(items.get(position).getStpend()==1){
+                    arr.add("OBS última entrega: "+items.get(position).getPendobs());
+                    arr.add("DT última entrega: "+items.get(position).getPenddtent());
+                    arr.add("Cod.Pend: "+items.get(position).getPendcodprocess());
+                }
                 map.put("OBS de entrega",arr);
                 Bundle args = new Bundle();
                 args.putString("codcli",String.valueOf(codcli_txtvw.getText()));

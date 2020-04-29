@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -14,6 +15,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -32,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class ProdutosActivity extends AppCompatActivity implements TaskListenerAct{
+public class ProdutosActivity extends AppCompatActivity implements TaskListenerAct , View.OnClickListener {
     TextView codcli_prod_txtvw, cliente_prod_txtvw, nf_prod_txtvw, prod_count_txtvw;
     ListView prodListView;
     ArrayList<Prod> prodList,prodListPend;
@@ -41,11 +45,12 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
     ProdAdapter prodAdapter;
     long numnota = 0, codcli = 0, numcar = 0;
     private static final String tagMenu = "karamTransportItemCheck";
-    String cliente = "", outputFile = "", email_cliente = "", email_cliente2, obs;
+    String cliente = "", outputFile = "", email_cliente = "", email_cliente2="", obs="";
     int lisPosition,notaPosition;
     DBConnection dbConnection;
     NF nf;
-    int stredito =0,motivoPos;
+    int motivoPos;
+    AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +88,11 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                 Bundle bundle = new Bundle();
                 bundle.putLong("codprod", prodList.get(position).getCodprod());
                 bundle.putString("descricao", prodList.get(position).getDescricao());
-                bundle.putLong("qt", prodList.get(position).getQt());
+                if(prodList.get(position).getPendqt()!=null && prodList.get(position).getPendqt()>0){
+                    bundle.putLong("qt",(prodList.get(position).getPendqt()!=null)? prodList.get(position).getPendqt():0);
+                }else{
+                    bundle.putLong("qt", prodList.get(position).getQt());
+                }
                 lisPosition = position;
                 intent.putExtras(bundle);
                 startActivity(intent);
@@ -155,6 +164,9 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
             prodList.get(lisPosition).setStdev(intent.getIntExtra("status", 0));
             prodList.get(lisPosition).setCodmotivodev(intent.getIntExtra("codMotivoDev", 0));
             prodAdapter.notifyDataSetChanged();
+            if(String.valueOf(searchView.getQuery()).trim()!=""){
+                searchView.setQuery("",true);
+            }
         }
     };
 
@@ -241,7 +253,28 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
 
     @Override
     public void onTaskFinish(String response) {
+        if(response.trim().equals("ok")){
+            nf.setStenvi(1);
+        }
+        //insert the nota into the local database
+        saveSqliteBG saveSqliteBG = new saveSqliteBG();
+        saveSqliteBG.execute();
+    }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.toast_btn_confirm:
+                alertDialog.dismiss();
+                nf.setStcred(1);
+                executeAll();
+                break;
+            case R.id.toast_btn_dismiss:
+                alertDialog.dismiss();
+                nf.setStcred(0);
+                executeAll();
+                break;
+        }
     }
 
 
@@ -252,7 +285,7 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
             Long numnota = longs[0];
             prodList = new ArrayList<>();
             Cursor c = dbConnection.select(false, "PROD", new String[]{
-                            "CODPROD", "QT", "QTFALTA", "STDEV", "CODBARRA1", "CODBARRA2", "DESCRICAO", "CODMOTIVO"},
+                            "CODPROD", "QT", "QTFALTA", "STDEV", "CODBARRA1", "CODBARRA2", "DESCRICAO", "CODMOTIVO","PENDQT"},
                     "NUMNOTA=?", new String[]{String.valueOf(numnota)}
                     , null, null, "DESCRICAO", null);
             if (c != null) {
@@ -268,6 +301,7 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                         prod.setQtfalta(c.getLong(c.getColumnIndex("QTFALTA")));
                         prod.setStdev(c.getInt(c.getColumnIndex("STDEV")));
                         prod.setCodmotivodev(c.getInt(c.getColumnIndex("CODMOTIVO")));
+                        prod.setPendqt(c.getLong(c.getColumnIndex("PENDQT")));
                     } catch (NumberFormatException ex) {
 
                     }
@@ -302,7 +336,32 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
     }
 
 
-    public void finalizar(){
+    public void finalizar() {
+        if (email_cliente2 != null && !email_cliente2.trim().matches("") && !Methods.isValidEmail(email_cliente2)) {
+            Methods.showEmailInvalidMsg(this);
+        } else {
+            if (Methods.checkGPSTurndOn(this, this)) {
+                nf = new NF();
+                if(checkIfDev()){
+                    showGenerateCredit();
+                }else{
+                    nf.setStcred(0);
+                    executeAll();
+                }
+            }
+        }
+    }
+
+    private boolean checkIfDev(){
+        for(Prod prod : prodList){
+            if(prod.getStdev()==2){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void executeAll(){
         SingleShotLocationProvider.requestSingleUpdate(this, new SingleShotLocationProvider.LocationCallback() {
             @Override
             public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
@@ -311,14 +370,13 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                 //start new connetion to the database
                 dbConnection = new DBConnection(ProdutosActivity.this);
                 //set all the informatins to new nota fiscal
-                nf = new NF();
                 nf.setNumnota(numnota);
                 nf.setObsentrega((obs != null) ? obs : "");
+                nf.setEmail_cliene2((email_cliente2!= null)?email_cliente2:"");
                 nf.setDtent(Methods.getCurrentDate());
-                nf.setLatent(Methods.roundFloat(location.latitude, 4));
-                nf.setLongtent(Methods.roundFloat(location.longitude, 4));
+                nf.setLatent(Methods.roundFloat(location.latitude, 6));
+                nf.setLongtent(Methods.roundFloat(location.longitude, 6));
                 nf.setStenvi(0);
-                nf.setStcred(stredito);
                 //Add arraylist of hashmap
                 ArrayList<HashMap<String,String>> mapArr = new ArrayList<>();
                 //check the type of the nota
@@ -333,18 +391,18 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                     jsonArr = "";
                 } else {
                     nf.setStent(2);
-
+                    prodListPend = new ArrayList<>();
                     c.moveToFirst();
                     while(c!=null && !c.isAfterLast()){
                         HashMap<String,String> map = new HashMap<>();
                         Prod prod = new Prod();
-                        map.put("CODPROD",String.valueOf(c.getLong(c.getColumnIndex("CODPROD"))));
+                        map.put(":CODPROD",String.valueOf(c.getLong(c.getColumnIndex("CODPROD"))));
                         prod.setCodprod(c.getLong(c.getColumnIndex("CODPROD")));
-                        map.put("QTFALTA",String.valueOf(c.getLong(c.getColumnIndex("QTFALTA"))));
+                        map.put(":QT",String.valueOf(c.getLong(c.getColumnIndex("QTFALTA"))));
                         prod.setQtfalta(c.getLong(c.getColumnIndex("QTFALTA")));
-                        map.put("CODMOTIVO",String.valueOf(c.getInt(c.getColumnIndex("CODMOTIVO"))));
+                        map.put(":CODMOTIVO",String.valueOf(c.getInt(c.getColumnIndex("CODMOTIVO"))));
                         prod.setCodmotivodev(c.getInt(c.getColumnIndex("CODMOTIVO")));
-                        map.put("STDEV",String.valueOf(c.getInt(c.getColumnIndex("STDEV"))));
+                        map.put(":STDEV",String.valueOf(c.getInt(c.getColumnIndex("STDEV"))));
                         prod.setStdev(c.getInt(c.getColumnIndex("STDEV")));
                         prodListPend.add(prod);
                         mapArr.add(map);
@@ -365,28 +423,31 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                     try {
                         String encodedParams = Methods.encode(map);
                         SRVConnection connection = new SRVConnection(ProdutosActivity.this, null, "response");
-                        connection.execute(getString(R.string.url_server_host) + getString(R.string.url_server_save_notadevren), encodedParams);
+                        connection.execute(getString(R.string.url_server_host) + getString(R.string.url_server_save_conferencia), encodedParams);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }else{
-                nf.setStenvi(0);
-                saveSqliteBG saveSqliteBG = new saveSqliteBG();
-                saveSqliteBG.execute();
+                    nf.setStenvi(0);
+                    saveSqliteBG saveSqliteBG = new saveSqliteBG();
+                    saveSqliteBG.execute();
                 }
             }
         });
     }
+
 
     class saveSqliteBG extends AsyncTask<Void, Void, Boolean>{
 
         @Override
         protected Boolean doInBackground(Void... voids) {
             boolean checkInsertNF = dbConnection.updatetNF(nf,"NUMNOTA="+nf.getNumnota(),null);
-            for(Prod prod:prodListPend){
-                dbConnection.updateProd(prod,"NUMNOTA=? AND CODPROD=?",new String[]{
-                        String.valueOf(nf.getNumnota()) , String.valueOf(prod.getCodprod())
-                });
+            if(prodListPend!=null && prodListPend.size()>0){
+                for(Prod prod:prodListPend){
+                    dbConnection.updateProd(prod,"NUMNOTA=? AND CODPROD=?",new String[]{
+                            String.valueOf(nf.getNumnota()) , String.valueOf(prod.getCodprod())
+                    });
+                }
             }
             return checkInsertNF;
         }
@@ -401,6 +462,13 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                 Methods.closeLoadingDialog();
                 //Close the dialog and the activity
                 finish();
+                Intent intentNotas = new Intent(ProdutosActivity.this,NotasActivity.class);
+                startActivity(intentNotas);
+                Methods.setSharedPref(ProdutosActivity.this,"long",getString(R.string.SHnota),0l);
+                Methods.setSharedPref(ProdutosActivity.this,"long",getString(R.string.SHcodcli),0l);
+                Methods.setSharedPref(ProdutosActivity.this,"string",getString(R.string.SHcliente),"");
+                Methods.setSharedPref(ProdutosActivity.this,"string",getString(R.string.SHemail_cliente),"");
+                Methods.setSharedPref(ProdutosActivity.this,"int",getString(R.string.SHnotaPosition),-1);
             }else{
                 View view = Methods.setToastView(ProdutosActivity.this,"",false,getString(R.string.save_nfdevren_error),
                         true,"",false,"",false);
@@ -421,5 +489,21 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
         intent.putExtra("stCred",nf.getStcred());
         intent.putExtra("position",notaPosition);
         LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
+    }
+
+    private void showGenerateCredit(){
+        View view = Methods.setToastView(this,"",false,
+                getString(R.string.credito_check), true,"Sim",true,
+                "Não",true);
+        Button btnConfirm = view.findViewById(R.id.toast_btn_confirm);
+        btnConfirm.setOnClickListener(this);
+        Button btnCancel= view.findViewById(R.id.toast_btn_dismiss);
+        btnCancel.setOnClickListener(this);
+        alertDialog = new AlertDialog.Builder(this)
+                .setView(view).create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+        btnConfirm.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
     }
 }

@@ -34,7 +34,7 @@
     <string name="invalid_barcode_nf2">Esta nota já foi conferida</string>
     <string name="canceling_checking">Aperte de novo para cancelar</string>
     <string name="invalid_email_format">Email do cliente inserido está em formato inválido</string>
-    <string name="pause_error">O processo de carregar os dados da carca foi intorrompido
+    <string name="pause_error">O processo de carregar os dados da carga foi intorrompido
     Evite sair do aplicativo enquato carregando</string>
     <string name="gps_notEnables">GPS desativado, deseja ir para os configurações para ativa-lo</string>
     <string name="save_nfdevren_error">Aconteceu um erro em gravação, tente de novo</string>
@@ -76,14 +76,17 @@
                     EMAIL_RCA TEXT(100),
                     OBSENTREGA TEXT(255),
                     DTENT DATETIME,
-                    LATENT FLOAT(3,4),
-					LONGTENT FLOAT(3,4),
-					LATDEV FLOAT(3,4),
-					LONGTDEV FLOAT(3,4),
+                    LATENT FLOAT(3,6),
+					LONGTENT FLOAT(3,6),
                     STENVI INT(1),
                     STENT INT(1),
                     STPEND INT(1),
                     STCRED INT(1),
+                    PENDCODPROCESS INT(8),
+                    PENDDTENT DATETIME,
+                    PENDOBS TEXT(255),
+                    PENDLAT FLOAT(3,6),
+					PENDLONGT FLOAT(3,6),
                     FOREIGN KEY(NUMCAR) REFERENCES CARGA(NUMCAR)
                 );</string>
     <string name="db_sql_createTableProd">CREATE TABLE  IF NOT EXISTS PROD
@@ -97,6 +100,8 @@
                     CODBARRA2 INT(20),
                     QTFALTA INT(6),
                     CODMOTIVO INT(3),
+                    PENDQT INT(3),
+                    PENDCODMOTIVO INT(3),
                     STDEV INT(1),
                     FOREIGN KEY(NUMNOTA) REFERENCES NF(NUMNOTA)
                 );

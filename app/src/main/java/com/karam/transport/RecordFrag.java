@@ -51,6 +51,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
     EditText obsEditTxt,emailEditTxt;
     Button recordBtn,deleteBtn,playBtn;
     LinearLayout recordLinLayout;
+    View recordLayout;
     SeekBar recordBar;
     CountDownTimer timer,timer2;
     Spinner motivoSpinner;
@@ -86,6 +87,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
         playBtn= view.findViewById(R.id.recorder_play_btn);
         recordBar= view.findViewById(R.id.recorder_bar);
         recordLinLayout = view.findViewById(R.id.record_bar_layout);
+        recordLayout = view.findViewById(R.id.record_layout);
         emailTxtVw = view.findViewById(R.id.recorder_email_txtvw);
         btnFinalizar = view.findViewById(R.id.check_finilizar_btn);
         //set the output file path str that sent from parent fragment
@@ -101,6 +103,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
         btnFinalizar.setOnClickListener(this);
         playBtn.setOnClickListener(this);
         deleteBtn.setOnClickListener(this);
+        recordLayout.setOnTouchListener(this);
         emailEditTxt.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -109,9 +112,9 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(whitchActivity==0){
-                    ((CheckActivity)getActivity()).setEmail_cliente2(emailEditTxt.getText().toString());
+                    ((CheckActivity)getActivity()).setEmail_cliente2(String.valueOf(emailEditTxt.getText()));
                 }else if(whitchActivity==1){
-                    ((ProdutosActivity)getActivity()).setEmail_cliente2(emailEditTxt.getText().toString());
+                    ((ProdutosActivity)getActivity()).setEmail_cliente2(String.valueOf(emailEditTxt.getText()));
                 }
 
             }
@@ -130,9 +133,9 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(whitchActivity==0){
-                    ((CheckActivity)getActivity()).setObs(obsEditTxt.getText().toString());
+                    ((CheckActivity)getActivity()).setObs(String.valueOf(obsEditTxt.getText()));
                 }else if(whitchActivity==1){
-                    ((ProdutosActivity)getActivity()).setObs(obsEditTxt.getText().toString());
+                    ((ProdutosActivity)getActivity()).setObs(String.valueOf(obsEditTxt.getText()));
                 }
             }
 
@@ -229,6 +232,8 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
     public boolean onTouch(View v, MotionEvent event) {
         if(v.getId() == R.id.recorder_bar){
             return false;
+        }else if(v.getId()==R.id.record_layout){
+            Methods.hideKeyboardFrom(getContext(),recordLayout);
         }
         return true;
     }

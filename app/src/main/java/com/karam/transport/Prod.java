@@ -1,13 +1,14 @@
 package com.karam.transport;
 
 public class Prod {
-    Long codprod,numnota,qt,qtfalta,codbarra1,codbarra2,pendqt;
+    Long codprod,numnota,qt,qtfalta,codbarra1,codbarra2,pendqt,numcar;
     Integer codmotivodev,stdev,pendcodmotivo;
     String descricao;
     public Prod(){}
 
 
-    public Prod(Long codprod, Long numnota, Long qt,Long qtfalta, Long codbarra1, Long codbarra2, Integer codmotivodev, Integer stdev, String descricao) {
+
+    public Prod(Long codprod, Long numnota,long numcar, Long qt, Long qtfalta, Long codbarra1, Long codbarra2, Integer codmotivodev, Integer stdev, String descricao) {
         this.codprod = codprod;
         this.numnota = numnota;
         this.qt = qt;
@@ -17,9 +18,10 @@ public class Prod {
         this.stdev = stdev;
         this.descricao = descricao;
         this.qtfalta = qtfalta;
+        this.numcar = numcar;
     }
 
-    public Prod(Long codprod, Long numnota, Long qt,Long qtfalta, Long codbarra1, Long codbarra2, Integer codmotivodev, Integer stdev, String descricao,Long pendqt,Integer pendcodmotivo) {
+    public Prod(Long codprod, Long numnota,long numcar, Long qt,Long qtfalta, Long codbarra1, Long codbarra2, Integer codmotivodev, Integer stdev, String descricao,Long pendqt,Integer pendcodmotivo) {
         this.codprod = codprod;
         this.numnota = numnota;
         this.qt = qt;
@@ -31,6 +33,16 @@ public class Prod {
         this.qtfalta = qtfalta;
         this.pendqt = pendqt;
         this.pendcodmotivo = pendcodmotivo;
+        this.numcar = numcar;
+    }
+
+
+    public Long getNumcar() {
+        return numcar;
+    }
+
+    public void setNumcar(Long numcar) {
+        this.numcar = numcar;
     }
 
 

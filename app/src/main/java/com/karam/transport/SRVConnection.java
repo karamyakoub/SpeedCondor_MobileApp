@@ -115,7 +115,7 @@ public class SRVConnection extends AsyncTask<String,Void,String> {
                     break;
                 }
                 in.close();
-                return sb.toString();
+                return String.valueOf(sb);
             }
             else
             {

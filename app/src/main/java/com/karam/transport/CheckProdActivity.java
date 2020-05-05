@@ -25,8 +25,7 @@ import android.widget.Toast;
 import java.nio.charset.MalformedInputException;
 
 public class CheckProdActivity extends AppCompatActivity implements View.OnClickListener, RadioButton.OnCheckedChangeListener, View.OnTouchListener {
-    long codprod;
-    long qt;
+    long codprod,numcar,qt;
     String descricao;
     boolean motivo;
     Spinner motivoSpinner;
@@ -42,6 +41,8 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_prod);
+        //get numcar
+        numcar =(long) Methods.getSharedPref(this,"long",getString(R.string.SHcarga));
         //set spinner
         setUpSpinner();
         //get layout element
@@ -121,8 +122,8 @@ public class CheckProdActivity extends AppCompatActivity implements View.OnClick
                         codMotDev = 0;
                     }
                     prod.setCodmotivodev(codMotDev);
-                    boolean checkInsertProd = dbConnection.updateProd(prod,"NUMNOTA=? and CODPROD=?",new String[]{
-                            String.valueOf(numnota),String.valueOf(codprod)
+                    boolean checkInsertProd = dbConnection.updateProd(prod,"NUMCAR=? AND NUMNOTA=? AND CODPROD=?",new String[]{
+                            String.valueOf(numcar),String.valueOf(numnota),String.valueOf(codprod)
                     });
                     if(checkInsertProd){
                         Intent intent = new Intent("GETPRODCHANGES");

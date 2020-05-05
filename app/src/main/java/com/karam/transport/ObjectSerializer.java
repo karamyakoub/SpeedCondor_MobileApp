@@ -42,7 +42,7 @@ public class ObjectSerializer {
             strBuf.append((char) (((bytes[i]) & 0xF) + ((int) 'a')));
         }
 
-        return strBuf.toString();
+        return String.valueOf(strBuf);
     }
 
     public static byte[] decodeBytes(String str) {

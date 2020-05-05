@@ -4,7 +4,15 @@ public class NF {
     Long numnota, numcar, codcli, codusur,pendcodprocess;
     String cliente, email_cliente,email_cliene2, uf, ciddade, bairro, obs1, obs2, obs3, obsentrega, rca, email_rca, dtent,penddtent,endereco,cep,pendobs;
     Float latent, longtent, pendlat, pendlongt;
-    Integer stenvi, stent, stpend,stcred;
+    Integer stenvi, stent, stpend,stcred,codmotivo;
+
+    public Integer getCodmotivo() {
+        return codmotivo;
+    }
+
+    public void setCodmotivo(Integer codmotivo) {
+        this.codmotivo = codmotivo;
+    }
 
     public Long getPendcodprocess() {
         return pendcodprocess;

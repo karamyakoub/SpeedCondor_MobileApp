@@ -37,7 +37,6 @@ public class DetailsActivity extends AppCompatActivity {
             HashMap<String,ArrayList<String>> map = (HashMap<String,ArrayList<String>>) ObjectSerializer.deserialize(args.getString("map"));
             DetailsAdapter adapter = new DetailsAdapter(this,titles,map);
             details_list.setAdapter(adapter);
-            //Log.i("karam", String.valueOf(details_list.getCount()));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -58,6 +58,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
     boolean checkRecordingTime = false;
     boolean checkTiming = true;
     boolean isClicked = false;
+    boolean isFinalizar = false;
     String outputFile,email_cliente;
     HashMap<String,String> globalResponse;
     MediaRecorder mediaRecorder;
@@ -151,10 +152,12 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
-        if(outputFile!=null){
-            File file = new File(outputFile);
-            if(file.exists()){
-                file.delete();
+        if(isFinalizar==false){
+            if(outputFile!=null){
+                File file = new File(outputFile);
+                if(file.exists()){
+                    file.delete();
+                }
             }
         }
     }
@@ -182,6 +185,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                             @Override
                             public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
                                 if (isClicked == false) {
+                                    btnFinalizar.setEnabled(false);
                                     recordBtn.setBackgroundResource(R.drawable.record2);
                                     recordBtn.setEnabled(false);
                                     recordTiming();
@@ -204,6 +208,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                                         recorded();
                                         isClicked = !isClicked;
                                         recordBtn.setBackgroundResource(R.drawable.record);
+                                        btnFinalizar.setEnabled(true);
                                     }
                                 }
                             }
@@ -219,6 +224,7 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                         }).check();
                 break;
             case R.id.check_finilizar_btn:
+                isFinalizar = true;
                 if(whitchActivity==0){
                     ((CheckActivity)getActivity()).finalizar();
                 }else if(whitchActivity==1){

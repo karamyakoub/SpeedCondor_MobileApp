@@ -2,16 +2,18 @@ package com.karam.transport;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,12 +28,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.material.tabs.TabLayout;
-
 import java.util.ArrayList;
 
-public class NotasActivity extends AppCompatActivity {
+public class NotasActivity extends AppCompatActivity implements View.OnClickListener,TaskListenerAct {
     private String TAG;
     ArrayList<NF> nfList,nfListFiltered ;
     TabLayout notasHeaderLayout;
@@ -41,10 +41,12 @@ public class NotasActivity extends AppCompatActivity {
     SearchView searchView;
     NFAdapter notasAdapter;
     long numcar;
-    Boolean  isDoubleBackClick = false;
+    Boolean  isDoubleBackClick = false,isAllSent =false;
+    int qtNotas;
     private static NotasActivity nActivity;
+    AlertDialog alertDialog;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notas);
         //assign a static instance of this actitvity
@@ -68,7 +70,7 @@ public class NotasActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 switch (tab.getPosition()){
                     case 0:
-                        notasAdapter = new NFAdapter(NotasActivity.this,nfList);
+                        notasAdapter = new NFAdapter(NotasActivity.this,NotasActivity.this,nfList);
                         notasListView.setAdapter(notasAdapter);
                         notasCountTxtvw.setText(notasAdapter.getCount()+" Notas");
                         break;
@@ -79,7 +81,7 @@ public class NotasActivity extends AppCompatActivity {
                                 nfListFiltered.add(nf);
                             }
                         }
-                        notasAdapter = new NFAdapter(NotasActivity.this,nfListFiltered);
+                        notasAdapter = new NFAdapter(NotasActivity.this,NotasActivity.this,nfListFiltered);
                         notasListView.setAdapter(notasAdapter);
                         notasCountTxtvw.setText(notasAdapter.getCount()+" Notas");
                         break;
@@ -90,7 +92,7 @@ public class NotasActivity extends AppCompatActivity {
                                 nfListFiltered.add(nf);
                             }
                         }
-                        notasAdapter = new NFAdapter(NotasActivity.this,nfListFiltered);
+                        notasAdapter = new NFAdapter(NotasActivity.this,NotasActivity.this,nfListFiltered);
                         notasListView.setAdapter(notasAdapter);
                         notasCountTxtvw.setText(notasAdapter.getCount()+" Notas");
                         break;
@@ -101,7 +103,7 @@ public class NotasActivity extends AppCompatActivity {
                                 nfListFiltered.add(nf);
                             }
                         }
-                        notasAdapter = new NFAdapter(NotasActivity.this,nfListFiltered);
+                        notasAdapter = new NFAdapter(NotasActivity.this,NotasActivity.this,nfListFiltered);
                         notasListView.setAdapter(notasAdapter);
                         notasCountTxtvw.setText(notasAdapter.getCount()+" Notas");
                         break;
@@ -110,7 +112,6 @@ public class NotasActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
             }
 
             @Override
@@ -130,13 +131,7 @@ public class NotasActivity extends AppCompatActivity {
             int pos = intent.getIntExtra("position",-1);
             if(pos > -1){
                 if(notasHeaderLayout.getSelectedTabPosition()==0) {
-                    nfList.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
-                    nfList.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
-                    nfList.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
-                    nfList.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
-                    nfList.get(pos).setStent(intent.getIntExtra("stEnt",0));
-                    nfList.get(pos).setStcred(intent.getIntExtra("stCred",0));
-
+                    setListNotasItemRefresh(pos,intent);
                 }else if(notasHeaderLayout.getSelectedTabPosition()==1){
                     nfListFiltered.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
                     nfListFiltered.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
@@ -145,9 +140,19 @@ public class NotasActivity extends AppCompatActivity {
                     nfListFiltered.get(pos).setStent(intent.getIntExtra("stEnt",0));
                     nfListFiltered.get(pos).setStcred(intent.getIntExtra("stCred",0));
                     nfListFiltered.remove(pos);
-                    searchView.setQuery("",true);
+                    setListNotasItemRefresh(pos,intent);
+                }else if(notasHeaderLayout.getSelectedTabPosition()==3){
+                    nfListFiltered.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
+                    nfListFiltered.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
+                    nfListFiltered.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
+                    nfListFiltered.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
+                    nfListFiltered.get(pos).setStent(intent.getIntExtra("stEnt",0));
+                    nfListFiltered.get(pos).setStcred(intent.getIntExtra("stCred",0));
+                    setListNotasItemRefresh(pos,intent);
                 }
+                searchView.setQuery("",true);
                 notasAdapter.notifyDataSetChanged();
+
             }
         }
     };
@@ -223,6 +228,61 @@ public class NotasActivity extends AppCompatActivity {
         notasTabLayout.addTab(notasTabLayout.newTab().setCustomView(item4_view));
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.toast_btn_confirm:
+                if(isAllSent){
+                    alertDialog.dismiss();
+                    Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
+                    Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
+                    finish();
+                    startActivity(intent);
+                }else{
+                    alertDialog.dismiss();
+                    new AsyncTask<Void,Void,Void>(){
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,false,String.valueOf(numcar));
+                            saveNotas.enviar();
+                            return null;
+                        }
+                    }.execute();
+                }
+                break;
+            case R.id.toast_btn_dismiss:
+                alertDialog.dismiss();
+                break;
+        }
+    }
+
+    @Override
+    public void onTaskFinish(String response) {
+        if(response.trim().equals("ok")){
+            new AsyncTask<Void,Void,Void>(){
+
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    DBConnection dbConnection = new DBConnection(NotasActivity.this);
+                    NF nf = new NF();
+                    nf.setStenvi(1);
+                    dbConnection.updatetNF(nf,"NUMCAR=?",new String[]{String.valueOf(numcar).trim()});
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
+                    Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
+                    finish();
+                    startActivity(intent);
+                }
+            }.execute();
+        }else{
+            Methods.showCostumeToast(this,response);
+        }
+    }
+
 
     class LoadNotasBG extends AsyncTask<Long, Void, ArrayList<NF>> {
         @Override
@@ -273,9 +333,10 @@ public class NotasActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<NF> nfs) {
             try{
-                notasAdapter = new NFAdapter(NotasActivity.this, nfs);
+                notasAdapter = new NFAdapter(NotasActivity.this,NotasActivity.this, nfs);
                 notasListView.setAdapter(notasAdapter);
                 notasCountTxtvw.setText(notasAdapter.getCount() + " Notas");
+                Methods.setSharedPref(NotasActivity.this,"int",getString(R.string.SHqtdNotasTotal),nfs.size());
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -336,11 +397,88 @@ public class NotasActivity extends AppCompatActivity {
             Intent intent = new Intent(this,BarcodeActivity.class);
             intent.putExtra("chooser","nf");
             startActivity(intent);
+        }else if(item.getItemId()==R.id.notas_menu_finalizar){
+            Methods.checkConnection(this);
+            if(Methods.isNetworkConnected){
+                new AsyncTask<Void,Void,String>(){
+                    @Override
+                    protected String doInBackground(Void... voids) {
+                        DBConnection dbConnection = new DBConnection(NotasActivity.this);
+                        Cursor c =dbConnection.select(false, "NF", new String[]{"NUMNOTA"},
+                                "STENT = 0 AND NUMCAR = ?", new String[]{String.valueOf(numcar)},null,null,null,null);//condition all nota checked if equal to 0
+                        Cursor c2 =dbConnection.select(false, "NF", new String[]{"NUMNOTA"},
+                                "STENVI = 0 AND STENT > 0 AND NUMCAR =?", new String[]{String.valueOf(numcar)},null,null,null,null);//condition all notas send if equal 0
+                        String returnedValue="";
+                        if(c.getCount() == 0 && c2.getCount() == 0){
+                            returnedValue = "ok|ok";
+                        }else if((c.getCount() > 0 && c2.getCount() == 0)){
+                            returnedValue = "notok|ok";
+                        }else if((c.getCount() == 0 && c2.getCount() > 0)){
+                            returnedValue = "ok|notok";
+                        }else if((c.getCount() > 0 && c2.getCount() > 0)){
+                            returnedValue = "notok|notok";
+                        }
+                        c.close();
+                        c2.close();
+                        return returnedValue;
+                    }
+                    @Override
+                    protected void onPostExecute(String s) {
+                        Log.i(TAG, s);
+                        switch (s.trim()){
+                            case "ok|ok":
+                                Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
+                                Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
+                                finish();
+                                startActivity(intent);
+                                break;
+                            case "ok|notok":
+                                SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,false,String.valueOf(numcar));
+                                saveNotas.enviar();
+                                break;
+                            case "notok|ok":
+                                isAllSent = true;
+                                showDialog();
+                                break;
+                            case "notok|notok":
+                                isAllSent = false;
+                                showDialog();
+                                break;
+                        }
+                    }
+                }.execute();
+            }else{
+                Methods.showCostumeToast(this,getString(R.string.finalizar_no_connection));
+            }
         }
         return true;
     }
 
     public static NotasActivity getInstance(){
         return nActivity;
+    }
+
+    public void showDialog(){
+        View view = Methods.setToastView(this,"",false,
+                this.getString(R.string.finalizar_warning), true,"Confirmar",true,
+                "Cancelar",true);
+        Button btnConfirm = view.findViewById(R.id.toast_btn_confirm);
+        btnConfirm.setOnClickListener(this);
+        Button btnCancel= view.findViewById(R.id.toast_btn_dismiss);
+        btnCancel.setOnClickListener(this);
+        alertDialog = new AlertDialog.Builder(this)
+                .setView(view).create();
+        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        alertDialog.show();
+        btnConfirm.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
+    }
+    private void setListNotasItemRefresh(int pos,Intent intent){
+        nfList.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
+        nfList.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
+        nfList.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
+        nfList.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
+        nfList.get(pos).setStent(intent.getIntExtra("stEnt",0));
+        nfList.get(pos).setStcred(intent.getIntExtra("stCred",0));
     }
 }

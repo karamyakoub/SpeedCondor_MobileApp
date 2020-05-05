@@ -212,6 +212,10 @@ public class DBConnection extends SQLiteOpenHelper {
         if(nf.getPendobs()!=null){
             contentValues.put("PENDOBS",nf.getPendobs());
         }
+
+        if(nf.getCodmotivo()!=null){
+            contentValues.put("CODMOTIVO",nf.getCodmotivo());
+        }
         long affectedRows = db.insertWithOnConflict("NF",column,contentValues,conflictAlgorithm);
         if(affectedRows>-1){
             return true;
@@ -347,7 +351,6 @@ public class DBConnection extends SQLiteOpenHelper {
     }
 
 
-
     public boolean insertProd(Prod prod,String column,int conflictAlgorithm){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -357,6 +360,9 @@ public class DBConnection extends SQLiteOpenHelper {
 
         if(prod.getNumnota()!=null){
             contentValues.put("NUMNOTA",prod.getNumnota());
+        }
+        if(prod.getNumcar()!=null){
+            contentValues.put("NUMCAR",prod.getNumcar());
         }
         if(prod.getQt()!=null){
             contentValues.put("QT",prod.getQt());
@@ -404,6 +410,9 @@ public class DBConnection extends SQLiteOpenHelper {
 
         if(prod.getNumnota()!=null){
             contentValues.put("NUMNOTA",prod.getNumnota());
+        }
+        if(prod.getNumcar()!=null){
+            contentValues.put("NUMCAR",prod.getNumcar());
         }
         if(prod.getQt()!=null){
             contentValues.put("QT",prod.getQt());

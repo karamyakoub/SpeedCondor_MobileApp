@@ -78,7 +78,7 @@ public class LoginCarregFrag extends Fragment implements TaskListener, View.OnTo
         {
             if(Methods.isNetworkConnected) {
                 responseTxtVw.setVisibility(View.VISIBLE);
-                numCarga = carregEditText.getText().toString();
+                numCarga = String.valueOf(carregEditText.getText());
                 if (!numCarga.matches("")) {
                     //configure the UI elementes
                     carregProgress.setVisibility(View.VISIBLE);
@@ -125,6 +125,7 @@ public class LoginCarregFrag extends Fragment implements TaskListener, View.OnTo
                                 startActivity(intent);
                                 getActivity().finish();
                             }catch (Exception ex){
+
                             }
                         }else{
                             responseTxtVw.setText(res);

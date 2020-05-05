@@ -158,6 +158,15 @@
                     android:background="@drawable/list_btn_selector_checkin"
                     android:scaleType="fitXY"
                     android:layout_gravity="center"/>
+                <ImageButton
+                    android:id="@+id/notas_location_imgvw"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/list_btn_selector_location"
+                    android:scaleType="fitXY"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"/>
 
 
             </LinearLayout>

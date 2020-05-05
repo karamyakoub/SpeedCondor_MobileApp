@@ -109,7 +109,7 @@ public class ProdAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if(constraint!= null && constraint.length()>0){
-                constraint = constraint.toString().toUpperCase();
+                constraint = String.valueOf(constraint).toUpperCase();
                 ArrayList<Prod> filters = new ArrayList<>();
                 for (int i = 0 ; i<temp_items.size();i++){
                     if(String.valueOf(temp_items.get(i).getCodprod()).toUpperCase().contains(constraint) ||

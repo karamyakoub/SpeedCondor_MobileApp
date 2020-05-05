@@ -286,7 +286,7 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
             prodList = new ArrayList<>();
             Cursor c = dbConnection.select(false, "PROD", new String[]{
                             "CODPROD", "QT", "QTFALTA", "STDEV", "CODBARRA1", "CODBARRA2", "DESCRICAO", "CODMOTIVO","PENDQT"},
-                    "NUMNOTA=?", new String[]{String.valueOf(numnota)}
+                    "NUMNOTA=? AND NUMCAR =?", new String[]{String.valueOf(numnota),String.valueOf(numcar)}
                     , null, null, "DESCRICAO", null);
             if (c != null) {
                 c.moveToFirst();
@@ -382,7 +382,7 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                 //check the type of the nota
                 Cursor c = dbConnection.select(false, "PROD", new String[]{
                                 "CODPROD", "QT", "QTFALTA", "STDEV", "CODBARRA1", "CODBARRA2", "DESCRICAO", "CODMOTIVO"},
-                        "NUMNOTA=? AND STDEV>?", new String[]{String.valueOf(numnota)
+                        "NUMCAR=? AND NUMNOTA=? AND STDEV>?", new String[]{String.valueOf(numcar),String.valueOf(numnota)
                                 , "0"}
                         , null, null, null, null);
                 int rowsCount = c.getCount();
@@ -418,8 +418,8 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                 if (Methods.isNetworkConnected) {
                     String audio = Methods.getBase64FromPath(outputFile);
                     HashMap<String, String> map = Methods.stringToHashMap("NUMNOTA%NUMCAR%LAT%LONGT%DTENTREGA%OBSENT%EMAIL_CLIENTE%CODMOTIVO%STCRED%STATUS%AUDIO%FILENAME%PRODJSON",
-                            nf.getNumnota().toString(), String.valueOf(numcar), nf.getLatent().toString(), nf.getLongtent().toString(), nf.getDtent(), nf.getObsentrega(),
-                            nf.getEmail_cliene2(),motivoCod[motivoPos] , nf.getStcred().toString(), nf.getStent().toString(), audio, fileName,jsonArr);
+                            String.valueOf(nf.getNumnota()), String.valueOf(numcar), String.valueOf(nf.getLatent()), String.valueOf(nf.getLongtent()), nf.getDtent(), nf.getObsentrega(),
+                            nf.getEmail_cliene2(),motivoCod[motivoPos] , String.valueOf(nf.getStcred()), String.valueOf(nf.getStent()), audio, fileName,jsonArr);
                     try {
                         String encodedParams = Methods.encode(map);
                         SRVConnection connection = new SRVConnection(ProdutosActivity.this, null, "response");
@@ -441,11 +441,13 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            boolean checkInsertNF = dbConnection.updatetNF(nf,"NUMNOTA="+nf.getNumnota(),null);
+            boolean checkInsertNF = dbConnection.updatetNF(nf,"NUMNOTA=? AND NUMCAR=?",new String[]{
+                    String.valueOf(numnota),String.valueOf(numcar)
+            });
             if(prodListPend!=null && prodListPend.size()>0){
                 for(Prod prod:prodListPend){
-                    dbConnection.updateProd(prod,"NUMNOTA=? AND CODPROD=?",new String[]{
-                            String.valueOf(nf.getNumnota()) , String.valueOf(prod.getCodprod())
+                    dbConnection.updateProd(prod,"NUMCAR =? AND NUMNOTA=? AND CODPROD=?",new String[]{
+                            String.valueOf(nf.getNumcar()),String.valueOf(nf.getNumnota()) , String.valueOf(prod.getCodprod())
                     });
                 }
             }

@@ -1,30 +1,41 @@
 package com.karam.transport;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NFAdapter extends BaseAdapter implements Filterable {
     private static final String TAG = "NFADAPTER";
+    Context context;
     Activity activity;
     ArrayList<NF> items,temp_items;
     CustomFilter customFilter;
 
-    public NFAdapter(Activity activity, ArrayList<NF> items) {
+
+
+    public NFAdapter(Context context,Activity activity, ArrayList<NF> items) {
+        this.context = context;
         this.activity = activity;
         this.items = items;
         this.temp_items = items;
@@ -57,6 +68,7 @@ public class NFAdapter extends BaseAdapter implements Filterable {
         final TextView nf_txtvw = convertView.findViewById(R.id.notas_nf_txtvw);
         final TextView status_txtvw = convertView.findViewById(R.id.notas_status_txtvw);
         final ImageButton checkinBtn = convertView.findViewById(R.id.notas_checkin_imgvw);
+        final ImageButton locationBtn = convertView.findViewById(R.id.notas_location_imgvw);
         switch (items.get(position).getStent()){
             case 0:
                 status_imgvw.setImageResource(R.drawable.stent_emtransito);
@@ -83,6 +95,11 @@ public class NFAdapter extends BaseAdapter implements Filterable {
                 status_txtvw.setText(activity.getString(R.string.notas_status_reentrega));
                 checkinBtn.setVisibility(View.INVISIBLE);
                 break;
+        }
+        if(items.get(position).getStpend()==1 && items.get(position).getStent()==0){
+            locationBtn.setVisibility(View.VISIBLE);
+        }else{
+            locationBtn.setVisibility(View.INVISIBLE);
         }
         codcli_txtvw.setText(String.valueOf(items.get(position).getCodcli()));
         cliente_txtvw.setText(String.valueOf(items.get(position).getCliente()));
@@ -148,6 +165,42 @@ public class NFAdapter extends BaseAdapter implements Filterable {
                 activity.startActivity(intent);
             }
         });
+        locationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Methods.checkGPSTurndOn(context,activity)){
+                    View view = Methods.setToastView(activity,"",false,
+                            activity.getString(R.string.maps_app_dialog),true,
+                            "Waze",true,"Google maps",true);
+                    final AlertDialog dialogMap = new AlertDialog.Builder(context)
+                            .create();
+                    dialogMap.setView(view);
+                    dialogMap.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialogMap.show();
+                    Button wazeButton = view.findViewById(R.id.toast_btn_confirm);
+                    Button googleButton = view.findViewById(R.id.toast_btn_dismiss);
+                    wazeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Uri gmmIntentUri = Uri.parse("https://waze.com/ul?q="+items.get(position).getPendlat()+
+                                    ","+items.get(position).getPendlongt()+"&navigate=yes");
+                            callMapIntent(position,gmmIntentUri,"com.waze");
+                            dialogMap.dismiss();
+                        }
+                    });
+
+                    googleButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Uri gmmIntentUri = Uri.parse("google.navigation:q="+items.get(position).getPendlat()+
+                                    ","+items.get(position).getPendlongt());
+                            callMapIntent(position,gmmIntentUri,"com.google.android.apps.maps");
+                            dialogMap.dismiss();
+                        }
+                    });
+                }
+            }
+        });
         return convertView;
     }
 
@@ -167,7 +220,7 @@ public class NFAdapter extends BaseAdapter implements Filterable {
         protected FilterResults performFiltering(CharSequence constraint) {
             FilterResults results = new FilterResults();
             if(constraint!= null && constraint.length()>0){
-                constraint = constraint.toString().toUpperCase();
+                constraint = String.valueOf(constraint).toUpperCase();
                 ArrayList<NF> filters = new ArrayList<>();
                 for (int i = 0 ; i<temp_items.size();i++){
                     if(String.valueOf(temp_items.get(i).getCodcli()).toUpperCase().contains(constraint) ||
@@ -189,6 +242,20 @@ public class NFAdapter extends BaseAdapter implements Filterable {
         protected void publishResults(CharSequence constraint, FilterResults results) {
             items = (ArrayList<NF>)results.values;
             notifyDataSetChanged();
+        }
+    }
+
+    private void callMapIntent(int position,Uri uri,String packageName){
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
+        mapIntent.setPackage(packageName);
+        if(mapIntent.resolveActivity(context.getPackageManager())!=null){
+            activity.startActivity(mapIntent);
+        }else{
+            View view = Methods.setToastView(activity,"",false,context.getString(R.string.map_app_error),
+                    true,"",false,"",false);
+            Toast toast = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+            toast.setView(view);
+            toast.show();
         }
     }
 }

@@ -39,12 +39,21 @@
     <string name="gps_notEnables">GPS desativado, deseja ir para os configurações para ativa-lo</string>
     <string name="save_nfdevren_error">Aconteceu um erro em gravação, tente de novo</string>
     <string name="check_prod_missing_info">Valores errados</string>
+    <string name="maps_app_dialog">Qual aplicativo deseja usar?</string>
+    <string name="map_app_error">Aplicatiovo não encontrado</string>
+    <string name="finalizar_warning">Não todas as entregas forma
+    finalizadas, pelo confirmar o fechamento o senhor(a)
+    aceita ter a responsabilidade por finalizar este carregamento</string>
+    <string name="finalizar_no_connection">Não há conexão, para finalizar a viagem
+    precisa de ter uma conexão disponivel</string>
     //_____________________________________URLS
     <string name="url_server_host">http://10.0.2.2/pendencia/php_app/</string>
     <string name="url_server_login">Login.php</string>
     <string name="url_server_load_carreg">LoadByCarga.php</string>
     <string name="url_server_save_notadevren">SaveNotaDevRen.php</string>
     <string name="url_server_save_conferencia">SaveNotaConfer.php</string>
+    <string name="url_server_save_auto">saveNotasProdsAuto.php</string>
+
     //_____________________________________SQL
     <string name="db_sql_createTableCarga">CREATE TABLE IF NOT EXISTS CARGA
         (
@@ -78,6 +87,7 @@
                     DTENT DATETIME,
                     LATENT FLOAT(3,6),
 					LONGTENT FLOAT(3,6),
+                    CODMOTIVO INT(3),
                     STENVI INT(1),
                     STENT INT(1),
                     STPEND INT(1),
@@ -94,6 +104,7 @@
                     ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     CODPROD INT(10) NOT NULL,
                     NUMNOTA INT(10) NOT NULL,
+                    NUMCAR INT(10) NOT NULL,
                     QT INT(6),
                     DESCRICAO TEXT(40),
                     CODBARRA1 INT(20),
@@ -142,6 +153,8 @@
     <string name="SHcliente">cliente</string>//type string
     <string name="SHemail_cliente">email_cliente</string>
     <string name="SHnotaPosition">nota_position</string>
+    <string name="SHqtdNotasTotal">qtd_notas_total</string>
+    <string name="SHqtdNotas">qtd_notas</string>
     //__________________________ARRAYS
     //array motivos cos
     <string-array name="motivos_dev_cod">

@@ -195,7 +195,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 dbConnection = new DBConnection(CheckActivity.this);
                 //set all the informatins to new nota fiscal
                 nf = new NF();
-                nf.setNumnota(Methods.longParser(nf_check_txtvw.getText().toString()));nf.setEmail_cliene2((email_cliente2!=null)?email_cliente2:"");
+                nf.setNumnota(Methods.longParser(String.valueOf(nf_check_txtvw.getText())));nf.setEmail_cliene2((email_cliente2!=null)?email_cliente2:"");
                 nf.setObsentrega((obs!=null)?obs:"");
                 nf.setDtent(Methods.getCurrentDate());
                 nf.setLatent(Methods.roundFloat(location.latitude,6));
@@ -206,12 +206,13 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 //Try to save online into the server
                 Methods.checkConnection(CheckActivity.this);
                 String[] motivoCod = getResources().getStringArray(R.array.motivos_dev_cod);
+                nf.setCodmotivo(Methods.integerParser(motivoCod[posSpinner]));
                 String fileName = numcar + "-" + nf.getNumnota();
                 if(Methods.isNetworkConnected){
                     String audio = Methods.getBase64FromPath(outputFile);
                     HashMap<String,String> map = Methods.stringToHashMap("NUMNOTA%NUMCAR%LAT%LONGT%DTENTREGA%OBSENT%EMAIL_CLIENTE%CODMOTIVO%STCRED%STATUS%AUDIO%FILENAME",
-                            nf.getNumnota().toString(),String.valueOf(numcar),nf.getLatent().toString(),nf.getLongtent().toString(),nf.getDtent(),nf.getObsentrega(),
-                            nf.getEmail_cliene2(),motivoCod[posSpinner], nf.getStcred().toString(),nf.getStent().toString(),audio,fileName);
+                            String.valueOf(nf.getNumnota()),String.valueOf(numcar),String.valueOf(nf.getLatent()),String.valueOf(nf.getLongtent()),nf.getDtent(),nf.getObsentrega(),
+                            nf.getEmail_cliene2(),motivoCod[posSpinner], String.valueOf(nf.getStcred()),nf.getStent().toString(),audio,fileName);
                     try {
                         String encodedParams = Methods.encode(map);
                         SRVConnection connection = new SRVConnection(CheckActivity.this,null,"response");
@@ -272,7 +273,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            boolean checkInsertNF = dbConnection.updatetNF(nf,"NUMNOTA="+nf.getNumnota(),null);
+            boolean checkInsertNF = dbConnection.updatetNF(nf,"NUMCAR = ? AND NUMNOTA = ?",
+                    new String[]{String.valueOf(numcar),String.valueOf(numnota)});
             return checkInsertNF;
         }
 

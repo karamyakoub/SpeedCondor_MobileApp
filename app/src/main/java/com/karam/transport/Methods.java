@@ -354,7 +354,7 @@ public class Methods {
             Long output = Long.parseLong(input);
             return output;
         } catch (Exception ex) {
-            return null;
+            return -1l;
         }
     }
 
@@ -363,7 +363,7 @@ public class Methods {
             Float output = Float.parseFloat(input);
             return output;
         }catch(Exception ex){
-            return null;
+            return -1f;
         }
     }
 
@@ -372,7 +372,7 @@ public class Methods {
             Integer output = Integer.parseInt(input);
             return output;
         }catch(Exception ex){
-            return null;
+            return -1;
         }
     }
 
@@ -404,7 +404,7 @@ public class Methods {
                             map.get("CLIENTE"),map.get("EMAIL_CLIENTE"),map.get("EMAIL_CLIENTE2"),map.get("UF"),map.get("CIDADE"),
                             map.get("BAIRRO"),map.get("OBS1"),map.get("OBS2"),map.get("OBS3"),
                             null,map.get("RCA"),map.get("EMAIL_RCA"),null,null,null,
-                            null,null,0,0,0,null,map.get("ENDERECO"),map.get("CEP"));
+                            null,null,0,0,0,-1,map.get("ENDERECO"),map.get("CEP"));
                     dbConnection.insertNF(nf,"OBSINTREGA,DTENT,LATENT,LONGTENT,PENDLAT,PENDLONGT",SQLiteDatabase.CONFLICT_REPLACE);
                 }
             }catch (SQLiteException ex){
@@ -418,8 +418,9 @@ public class Methods {
             List<HashMap<String,String>> prodMap = toList((mapCNPD.get("PROD")));
             try{
                 for(HashMap<String,String> map : prodMap){
-                    prod = new Prod(longParser(map.get("CODPROD")),longParser(map.get("NUMNOTA")),longParser(map.get("QT")),
+                    prod = new Prod(longParser(map.get("CODPROD")),longParser(map.get("NUMNOTA")),longParser(map.get("NUMCAR")),longParser(map.get("QT")),
                             0l,longParser(map.get("CODBARRA1")),longParser(map.get("CODBARRA2")),0,0,map.get("DESCRICAO"));
+
                     dbConnection.insertProd(prod,null,SQLiteDatabase.CONFLICT_IGNORE);
                 }
             }catch (SQLiteException ex){
@@ -440,7 +441,7 @@ public class Methods {
                                 map.get("CLIENTE"),map.get("EMAIL_CLIENTE"),map.get("EMAIL_CLIENTE2"),map.get("UF"),map.get("CIDADE"),
                                 map.get("BAIRRO"),map.get("OBS1"),map.get("OBS2"),map.get("OBS3"),
                                 null,map.get("RCA"),map.get("EMAIL_RCA"),null,null,null,
-                                FloatParser(map.get("PENDLAT")),FloatParser(map.get("PENDLONGT")),0,0,1,null,map.get("ENDERECO"),map.get("CEP"),
+                                FloatParser(map.get("LAT")),FloatParser(map.get("LONGT")),0,0,1,-1,map.get("ENDERECO"),map.get("CEP"),
                                 longParser(map.get("CODPROCESS")),map.get("DTENTREGA"),map.get("OBSENT"));
                         dbConnection.insertNF(nfpend,"OBSINTREGA,DTENT,LATENT,PENDLONGT",SQLiteDatabase.CONFLICT_REPLACE);
                     }
@@ -455,7 +456,7 @@ public class Methods {
                 List<HashMap<String,String>> prodMapPend = toList((mapCNPD.get("PRODPEND")));
                 try{
                     for(HashMap<String,String> map : prodMapPend){
-                        prodPend = new Prod(longParser(map.get("CODPROD")),longParser(map.get("NUMNOTA")),longParser(map.get("QT")),
+                        prodPend = new Prod(longParser(map.get("CODPROD")),longParser(map.get("NUMNOTA")),longParser(map.get("NUMCAR")),longParser(map.get("QT")),
                                 0l,longParser(map.get("CODBARRA1")),longParser(map.get("CODBARRA2")),0,0,map.get("DESCRICAO")
                                 ,longParser(map.get("QTFALTA")),integerParser(map.get("CODMOTIVO")));
                         dbConnection.insertProd(prodPend,null,SQLiteDatabase.CONFLICT_IGNORE);
@@ -486,7 +487,6 @@ public class Methods {
 
     public static String getBase64FromPath(String path) {
         String base64 = "";
-
             File file = new File(path);
             if(file.exists()){
                 try {
@@ -615,6 +615,14 @@ public class Methods {
         View view = Methods.setToastView(activity,"",false,activity.getString(R.string.invalid_email_format),
                 true,"",false,"",false);
         Toast toast = Toast.makeText(activity, "", Toast.LENGTH_LONG);
+        toast.setView(view);
+        toast.show();
+    }
+
+    public  static void showCostumeToast(Activity activity,String msg){
+        View view = Methods.setToastView(activity, "", false, msg,
+                true, "", false, "", false);
+        Toast toast = Toast.makeText(activity, "", Toast.LENGTH_SHORT);
         toast.setView(view);
         toast.show();
     }

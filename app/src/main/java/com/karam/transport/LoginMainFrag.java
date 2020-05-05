@@ -62,8 +62,8 @@ public class LoginMainFrag extends Fragment implements TaskListener , View.OnCli
         Methods.checkConnection(getContext());
         if (v.getId() == R.id.login_button) {
             if (Methods.isNetworkConnected) {
-                cod = codEditText.getText().toString();
-                String password = passEditText.getText().toString();
+                cod = String.valueOf(codEditText.getText());
+                String password = String.valueOf(passEditText.getText());
                 if (!cod.matches("") && !password.matches("")) {
                     //configure the UI elementes
                     loginProgBar.setVisibility(View.VISIBLE);
@@ -104,7 +104,7 @@ public class LoginMainFrag extends Fragment implements TaskListener , View.OnCli
         if(isPause == false){
             if(Methods.checkValidJson(response)){//check if the response is json or jarray or just a string
                 HashMap<String,String> responseMap = Methods.toHashMap(response);//Convert the json to list of hashmap
-                if(responseMap.get("cod").toString().matches("200")){
+                if(String.valueOf(responseMap.get("cod")).matches("200")){
                     Methods.setSharedPref(getContext(),"boolean",getString(R.string.SHisLogin),true);
                     Methods.setSharedPref(getContext(),"long",getString(R.string.SHcodmotorista),Long.parseLong(cod));//should reset it when finish the process
                     Fragment fragment = new LoginCarregFrag();

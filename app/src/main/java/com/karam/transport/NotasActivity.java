@@ -3,6 +3,10 @@ package com.karam.transport;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class NotasActivity extends AppCompatActivity implements View.OnClickListener,TaskListenerAct {
     private String TAG;
@@ -243,7 +248,7 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                     new AsyncTask<Void,Void,Void>(){
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,false,String.valueOf(numcar));
+                            SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
                             saveNotas.enviar();
                             return null;
                         }
@@ -260,7 +265,6 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
     public void onTaskFinish(String response) {
         if(response.trim().equals("ok")){
             new AsyncTask<Void,Void,Void>(){
-
                 @Override
                 protected Void doInBackground(Void... voids) {
                     DBConnection dbConnection = new DBConnection(NotasActivity.this);
@@ -433,7 +437,7 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                                 startActivity(intent);
                                 break;
                             case "ok|notok":
-                                SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,false,String.valueOf(numcar));
+                                SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
                                 saveNotas.enviar();
                                 break;
                             case "notok|ok":
@@ -481,4 +485,10 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
         nfList.get(pos).setStent(intent.getIntExtra("stEnt",0));
         nfList.get(pos).setStcred(intent.getIntExtra("stCred",0));
     }
+
+    private void dropDownDataWorker(){
+        WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("com.karam.transport-"+numcar);
+    }
+
+
 }

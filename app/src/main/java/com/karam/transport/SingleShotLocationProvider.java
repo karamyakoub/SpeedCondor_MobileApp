@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
@@ -82,8 +83,8 @@ public class SingleShotLocationProvider {
 
     // consider returning Location instead of this dummy wrapper class
     public static class GPSCoordinates {
-        public float longitude = -1;
-        public float latitude = -1;
+        public float longitude = 0f;
+        public float latitude = 0f;
 
         public GPSCoordinates(float theLatitude, float theLongitude) {
             longitude = theLongitude;

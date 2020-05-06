@@ -135,30 +135,13 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
     }
     @Override
     public void onBackPressed() {
-        if(isDoubleBackClick){
-            finish();
-            if(outputFile!=null){
-                File file = new File(outputFile);
-                if(file.exists()){
-                    file.delete();
-                }
+        super.onBackPressed();
+        if(outputFile!=null){
+            File file = new File(outputFile);
+            if(file.exists()){
+                file.delete();
             }
-        }else{
-            View view = Methods.setToastView(CheckActivity.this,"",false,getString(R.string.canceling_checking),
-                    true,"",false,"",false);
-            Toast toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
-            toast.setView(view);
-            toast.show();
         }
-        isDoubleBackClick = true;
-        final Handler myHandler = new Handler();
-        myHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isDoubleBackClick = false;
-                myHandler.removeCallbacksAndMessages(null);
-            }
-        },2000);
     }
 
     @Override

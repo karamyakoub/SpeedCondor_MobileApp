@@ -114,7 +114,8 @@
                     PENDQT INT(3),
                     PENDCODMOTIVO INT(3),
                     STDEV INT(1),
-                    FOREIGN KEY(NUMNOTA) REFERENCES NF(NUMNOTA)
+                    FOREIGN KEY(NUMNOTA) REFERENCES NF(NUMNOTA),
+                    FOREIGN KEY(NUMCAR) REFERENCES CARGA(NUMCAR)
                 );
     </string>
     <string name="db_sql_dropTableCarga">
@@ -130,10 +131,10 @@
         DELETE FROM CARGA WHERE NUMCAR IN (SELECT NUMCAR FROM CARGA WHERE DTSAIDA = (SELECT MIN(DTSAIDA) FROM CARGA));
     </string>
     <string name="db_sql_delete_above_5_NF">
-        DELETE FROM NF WHERE NUMNOTA IN (SELECT NUMNOTA FROM NF WHERE NUMNOTA IN (SELECT NUMCAR FROM CARGA WHERE DTSAIDA = (SELECT MIN(DTSAIDA) FROM CARGA)));
+        DELETE FROM NF WHERE NUMCAR IN (SELECT NUMCAR FROM CARGA WHERE DTSAIDA = (SELECT MIN(DTSAIDA) FROM CARGA));
     </string>
     <string name="db_sql_delete_above_5_prod">
-        DELETE FROM PROD WHERE NUMNOTA IN (SELECT NUMNOTA FROM NF WHERE NUMNOTA IN (SELECT NUMCAR FROM CARGA WHERE DTSAIDA = (SELECT MIN(DTSAIDA) FROM CARGA))) ;
+        DELETE FROM PROD WHERE NUMCAR IN (SELECT NUMCAR FROM CARGA WHERE DTSAIDA = (SELECT MIN(DTSAIDA) FROM CARGA));
     </string>
     //___________________________Tags
     <string name="main_activity_tag">MAINACTIVITY</string>
@@ -143,6 +144,7 @@
     <string name="login_carreg_frag">LOGINCARREGFRAG</string>
     <string name="server_connection">SRVCONNECTION</string>
     <string name="notas_activity">NOTASACTIVITY</string>
+    <string name="tag_unique_work">com.karam.transport</string>
     //___________________________SHPREF
     <string name="SHisLogin">isLogin</string>/type boolean
     <string name="SHcarga">numCarga</string>//type boolean

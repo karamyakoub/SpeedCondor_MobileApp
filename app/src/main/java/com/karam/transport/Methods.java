@@ -38,6 +38,13 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.internal.clearcut.zzcn;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.play.core.tasks.Task;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -86,8 +93,8 @@ public class Methods {
     }
 
     //Static method that gets the shared prefrences in this app
-    public  static Object getSharedPref(@NonNull Activity activity,@NonNull String type,@NonNull String name){
-        SharedPreferences sharedPref = activity.getSharedPreferences(
+    public  static Object getSharedPref(@NonNull Context context,@NonNull String type,@NonNull String name){
+        SharedPreferences sharedPref = context.getSharedPreferences(
                 "com.example.pendencia", Context.MODE_PRIVATE);
         Object val = null;
         switch (type)
@@ -544,7 +551,7 @@ public class Methods {
         File[] files = mediaStorageDir.listFiles();
         if(files.length>0){
             for (File file:files){
-                if(file.getName().split("-")[0] == String.valueOf(numcar)){
+                if(file.getName().split("-")[0].trim().equals(String.valueOf(numcar).trim())){
                     try{
                         file.delete();
                     }catch(Exception ex){
@@ -655,5 +662,4 @@ public class Methods {
         toast.setView(view);
         toast.show();
     }
-
 }

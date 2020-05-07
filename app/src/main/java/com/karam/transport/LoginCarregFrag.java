@@ -3,17 +3,12 @@ package com.karam.transport;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.work.Constraints;
+import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,8 +18,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -124,34 +117,29 @@ public class LoginCarregFrag extends Fragment implements TaskListener, View.OnTo
 
                 @Override
                 protected void onPostExecute(String res) {
-                    if(isPaused==false){
-                        if(res=="ok"){
-                            try{
-                                Methods.setSharedPref(getContext(),"long",getString(R.string.SHcarga),Methods.longParser(numCarga));
-                                Intent intent = new Intent(getActivity(),NotasActivity.class);
+                    if(res=="ok"){
+                        try{
+                            Methods.setSharedPref(getContext(),"long",getString(R.string.SHcarga),Methods.longParser(numCarga));
+                            Intent intent = new Intent(getActivity(),NotasActivity.class);
+                            if(isPaused==false){
                                 startActivity(intent);
-                                getActivity().finish();
-                                //add work to check notas sending and location tracking
-                                try{
-                                    final Constraints constraints = new Constraints.Builder().setRequiredNetworkType(
-                                            NetworkType.CONNECTED).build();
-                                    final PeriodicWorkRequest workRequest = new  PeriodicWorkRequest.Builder(
-                                            DataWorker.class,15, TimeUnit.MINUTES)
-                                            .setConstraints(constraints)
-                                            .addTag("com.karam.transport-"+numCarga)
-                                            .build();
-                                    WorkManager.getInstance(getContext()).enqueue(workRequest);
-                                }catch (Exception ex){
-
-                                }
-                            }catch (Exception ex){
-
                             }
-                        }else{
-                            responseTxtVw.setText(res);
+                            getActivity().finish();
+                            //add work to check notas sending and location tracking
+                            try{
+                                final Constraints constraints = new Constraints.Builder().setRequiredNetworkType(
+                                        NetworkType.CONNECTED).build();
+                                final PeriodicWorkRequest workRequest = new  PeriodicWorkRequest.Builder(
+                                        DataWorker.class,15, TimeUnit.MINUTES)
+                                        .setConstraints(constraints)
+                                        .build();
+                                WorkManager.getInstance(getContext()).enqueueUniquePeriodicWork(getString(R.string.tag_unique_work), ExistingPeriodicWorkPolicy.REPLACE,workRequest);
+                            }catch (Exception ex){
+                            }
+                        }catch (Exception ex){
                         }
                     }else{
-                        responseTxtVw.setText("");
+                        responseTxtVw.setText(res);
                     }
                     //configure the UI elementes
                     carregButton.setEnabled(true);

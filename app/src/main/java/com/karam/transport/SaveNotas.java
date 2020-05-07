@@ -16,6 +16,7 @@ public class SaveNotas {
     Activity activity;
     String numnota,numcar,dtfinal;
     ArrayList<HashMap<String,String>> notasList,pordsList;
+    HashMap<String, String> map;
     public SaveNotas(Context context,Activity activity,boolean isDtFinal,String numcar) {
         this.context = context;
         this.activity = activity;
@@ -88,13 +89,23 @@ public class SaveNotas {
             c.close();
             String jsonNotas = Methods.toJson(notasList);
             String jsonProds = Methods.toJson(pordsList);
-            HashMap<String, String> map = new HashMap<>();
+
             if(dtfinal != null){
-                map = Methods.stringToHashMap("NOTAJSON%PRODJSON%DTFINAL",jsonNotas,jsonProds,dtfinal);
+                map = Methods.stringToHashMap("NOTAJSON%PRODJSON%DTFINAL%KM%NUMCAR",jsonNotas,jsonProds,dtfinal,"EXSISTS",numcar);
             }else{
-                map = Methods.stringToHashMap("NOTAJSON%PRODJSON",jsonNotas,jsonProds);
+                map = Methods.stringToHashMap("NOTAJSON%PRODJSON%KM%NUMCAR",jsonNotas,jsonProds,"EXSISTS",numcar);
             }
 
+            String encodedParams = null;
+            try {
+                encodedParams = Methods.encode(map);
+                SRVConnection connection = new SRVConnection(activity, null, "response");
+                connection.execute(activity.getString(R.string.url_server_host) + activity.getString(R.string.url_server_save_auto), encodedParams);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            map = Methods.stringToHashMap("KM%NUMCAR","EXSISTS",numcar);
             String encodedParams = null;
             try {
                 encodedParams = Methods.encode(map);

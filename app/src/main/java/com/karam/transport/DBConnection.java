@@ -474,7 +474,7 @@ public class DBConnection extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor c = select(false,"CARGA",new String[]{"NUMCAR"},null,null,null,null,"DTSAIDA DESC",null);
         if(c!= null && c.getCount()>5){
-            c.moveToFirst();
+            c.moveToLast();
             numcar = c.getLong(c.getColumnIndex("NUMCAR"));
             db.execSQL(context.getString(R.string.db_sql_delete_above_5_prod));
             db.execSQL(context.getString(R.string.db_sql_delete_above_5_NF));

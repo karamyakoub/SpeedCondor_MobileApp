@@ -199,6 +199,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                     try {
                         String encodedParams = Methods.encode(map);
                         SRVConnection connection = new SRVConnection(CheckActivity.this,null,"response");
+                        SRVConnection SRVconnection = new SRVConnection(CheckActivity.this,null,"response");
                         connection.execute(getString(R.string.url_server_host)+getString(R.string.url_server_save_notadevren),encodedParams);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -281,8 +282,6 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
-
     public void finalizar(){
         if(email_cliente2!=null && !email_cliente2.trim().matches("") && !Methods.isValidEmail(email_cliente2)){
             Methods.showEmailInvalidMsg(CheckActivity.this);
@@ -302,4 +301,5 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+
 }

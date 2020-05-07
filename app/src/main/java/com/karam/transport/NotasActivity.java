@@ -3,9 +3,6 @@ package com.karam.transport;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.work.Constraints;
-import androidx.work.NetworkType;
-import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
 import android.app.Activity;
@@ -34,7 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
 
 public class NotasActivity extends AppCompatActivity implements View.OnClickListener,TaskListenerAct {
     private String TAG;
@@ -45,6 +42,7 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
     TextView notasCountTxtvw;
     SearchView searchView;
     NFAdapter notasAdapter;
+    int selecter=0;
     long numcar;
     Boolean  isDoubleBackClick = false,isAllSent =false;
     int qtNotas;
@@ -238,21 +236,13 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()){
             case R.id.toast_btn_confirm:
                 if(isAllSent){
-                    alertDialog.dismiss();
-                    Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
-                    Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
-                    finish();
-                    startActivity(intent);
+                    //here
+                    saveKM();
                 }else{
+                    selecter = 0;
                     alertDialog.dismiss();
-                    new AsyncTask<Void,Void,Void>(){
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
-                            saveNotas.enviar();
-                            return null;
-                        }
-                    }.execute();
+                    SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
+                    saveNotas.enviar();
                 }
                 break;
             case R.id.toast_btn_dismiss:
@@ -263,27 +253,35 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onTaskFinish(String response) {
-        if(response.trim().equals("ok")){
-            new AsyncTask<Void,Void,Void>(){
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    DBConnection dbConnection = new DBConnection(NotasActivity.this);
-                    NF nf = new NF();
-                    nf.setStenvi(1);
-                    dbConnection.updatetNF(nf,"NUMCAR=?",new String[]{String.valueOf(numcar).trim()});
-                    return null;
-                }
+        if(selecter==0){
+            if(response.trim().equals("ok")){
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        DBConnection dbConnection = new DBConnection(NotasActivity.this);
+                        NF nf = new NF();
+                        nf.setStenvi(1);
+                        dbConnection.updatetNF(nf,"NUMCAR=?",new String[]{String.valueOf(numcar).trim()});
+                        return null;
+                    }
 
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
-                    Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
-                    finish();
-                    startActivity(intent);
-                }
-            }.execute();
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
+                        dropDownDataWorker();
+                        Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
+                        finish();
+                        startActivity(intent);
+                    }
+                }.execute();
+            }else{
+                Methods.showCostumeToast(this,response);
+            }
         }else{
-            Methods.showCostumeToast(this,response);
+            Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
+            Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
+            finish();
+            startActivity(intent);
         }
     }
 
@@ -428,17 +426,15 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                     }
                     @Override
                     protected void onPostExecute(String s) {
-                        Log.i(TAG, s);
                         switch (s.trim()){
                             case "ok|ok":
-                                Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
-                                Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
-                                finish();
-                                startActivity(intent);
+                                //
+                                saveKM();
                                 break;
                             case "ok|notok":
-                                SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
-                                saveNotas.enviar();
+                                selecter=0;
+                                SaveNotas saveNotas2 = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
+                                saveNotas2.enviar();
                                 break;
                             case "notok|ok":
                                 isAllSent = true;
@@ -481,14 +477,25 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
         nfList.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
         nfList.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
         nfList.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
-        nfList.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
         nfList.get(pos).setStent(intent.getIntExtra("stEnt",0));
         nfList.get(pos).setStcred(intent.getIntExtra("stCred",0));
     }
 
     private void dropDownDataWorker(){
-        WorkManager.getInstance(getApplicationContext()).cancelAllWorkByTag("com.karam.transport-"+numcar);
+        WorkManager.getInstance(getApplicationContext()).cancelUniqueWork("com.karam.transport");
     }
 
 
+    private void saveKM(){
+        selecter = 1;
+        HashMap <String,String> map = Methods.stringToHashMap("KM%NUMCAR","EXSISTS",String.valueOf(numcar));
+        String encodedParams = null;
+        try {
+            encodedParams = Methods.encode(map);
+            SRVConnection connection = new SRVConnection(NotasActivity.this, null, "response");
+            connection.execute(NotasActivity.this.getString(R.string.url_server_host) + NotasActivity.this.getString(R.string.url_server_save_auto), encodedParams);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

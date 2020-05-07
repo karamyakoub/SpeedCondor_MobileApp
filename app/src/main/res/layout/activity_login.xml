@@ -10,31 +10,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </RelativeLayout>
-    <LinearLayout
-        android:id="@+id/login_side_layout"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/colorBege_app"
-        android:layout_gravity="start"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/circle_shape"/>
-        </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="@color/colorBlue_grey_app"
-            android:elevation="3dp"
-            android:translationZ="3dp"/>
 
-
-    </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

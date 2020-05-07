@@ -37,10 +37,6 @@ public class DataWorker extends ListenableWorker {
     String numcar,numnota,jsonNotas,jsonProds;
     final static String TAG ="DATAWORKER";
 
-    /**
-     * @param appContext   The application {@link Context}
-     * @param workerParams Parameters to setup the internal state of this worker
-     */
     public DataWorker(@NonNull Context appContext, @NonNull WorkerParameters workerParams) {
         super(appContext, workerParams);
     }
@@ -52,12 +48,12 @@ public class DataWorker extends ListenableWorker {
             SingleShotLocationProvider.requestSingleUpdate(getApplicationContext(), new SingleShotLocationProvider.LocationCallback() {
                 @Override
                 public void onNewLocationAvailable(SingleShotLocationProvider.GPSCoordinates location) {
-                    enviar(location.latitude,location.longitude);
+                    enviar(Methods.roundFloat(location.latitude,6),Methods.roundFloat(location.longitude,6));
                     Log.i(TAG, "Work done with location");
                 }
             });
         }else{
-            enviar(0,0);
+            enviar(0f,0f);
             Log.i(TAG, "Work done without location");
         }
 
@@ -92,13 +88,13 @@ public class DataWorker extends ListenableWorker {
             }
         };
     }
-    public void enviar(final double lat, final double longt){
+    public void enviar(final float lat, final float longt){
         new AsyncTask<Void,Void,String>(){
             @Override
             protected String doInBackground(Void... voids) {
-                HashMap<String, String> map = new HashMap<>();
+                String returnedValue ="";
                 dbConnection = new DBConnection(getApplicationContext());
-                String returnVal="";
+                numcar = String.valueOf((long) Methods.getSharedPref(getApplicationContext(),"long",getApplicationContext().getString(R.string.SHcarga)));
                 notasList = new ArrayList<>();
                 pordsList = new ArrayList<>();
                 Cursor c = dbConnection.select(false, "NF", null,
@@ -158,24 +154,23 @@ public class DataWorker extends ListenableWorker {
                     c.close();
                     jsonNotas = Methods.toJson(notasList);
                     jsonProds = Methods.toJson(pordsList);
+                    if(lat != 0f && longt != 0f){
+                        returnedValue = callServer("NOTAJSON%PRODJSON%NUMCAR%LAT%LONGT",lat,longt,"NotLocUpdated");//Case 1 notas and location updated
+                    }else{
+                        returnedValue = callServer("NOTAJSON%PRODJSON%NUMCAR",lat,longt,"NotUpdated");//Case 2 notas updated
+                    }
+                }else{
+                    if(lat != 0 && longt != 0){
+                        returnedValue = callServer("LAT%LONGT%NUMCAR",lat,longt,"LocUpdated");//Case 3 location updated
+                    }else{
+                        returnedValue = "NotingToUpdate";//Case 4 nothing to update
+                    }
                 }
-                map = Methods.stringToHashMap("NOTAJSON%PRODJSON%NUMCAR%LAT%LONGT", jsonNotas, jsonProds, numcar,
-                        String.valueOf(lat), String.valueOf(longt));
-                String encodedParams = null;
-                try {
-                    encodedParams = Methods.encode(map);
-                    setConn(getApplicationContext().getString(R.string.url_server_host) + getApplicationContext().getString(R.string.url_server_save_auto));
-                    response(encodedParams);
-                    return "ok";
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return "not ok";
-                }
+                return returnedValue;
             }
-
             @Override
             protected void onPostExecute(String s) {
-                if(s!=null && s.trim().equals("ok")){
+                if(s!=null && (s.trim().equals("NotLocUpdated") || s.trim().equals("NotUpdated"))){
                     dbConnection = new DBConnection(getApplicationContext());
                     NF nf = new NF();
                     nf.setStenvi(1);
@@ -184,6 +179,31 @@ public class DataWorker extends ListenableWorker {
             }
         }.execute();
     }
+    private String callServer(String vars,float lat,float longt,String returnedValue){
+        HashMap<String,String> map = new HashMap<>();
+        switch (returnedValue){
+            case "NotLocUpdated":
+                map = Methods.stringToHashMap(vars,jsonNotas,jsonProds, numcar,
+                        String.valueOf(lat), String.valueOf(longt));
+                break;
+            case "NotUpdated":
+                map = Methods.stringToHashMap(vars, jsonNotas,jsonProds,numcar);
+                break;
+            case "LocUpdated":
+                map = Methods.stringToHashMap(vars,String.valueOf(lat), String.valueOf(longt),numcar);
+        }
+
+        try {
+            String encodedParams = Methods.encode(map);
+            setConn(getApplicationContext().getString(R.string.url_server_host) + getApplicationContext().getString(R.string.url_server_save_auto));
+            response(encodedParams);
+            return returnedValue;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
+
 
     private String setConn(String link){
         try

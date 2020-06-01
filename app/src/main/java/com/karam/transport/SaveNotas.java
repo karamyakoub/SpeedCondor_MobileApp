@@ -3,7 +3,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,15 +16,11 @@ public class SaveNotas {
     String numnota,numcar,dtfinal;
     ArrayList<HashMap<String,String>> notasList,pordsList;
     HashMap<String, String> map;
-    public SaveNotas(Context context,Activity activity,boolean isDtFinal,String numcar) {
+    public SaveNotas(Context context,Activity activity,String numcar) {
         this.context = context;
         this.activity = activity;
         this.numcar = numcar;
-        if(isDtFinal){
-            dtfinal = Methods.getCurrentDate();
-        }else{
-            dtfinal = null;
-        }
+        dtfinal = Methods.getCurrentDate();
         dbConnection = new DBConnection(context);
     }
 
@@ -89,12 +84,7 @@ public class SaveNotas {
             c.close();
             String jsonNotas = Methods.toJson(notasList);
             String jsonProds = Methods.toJson(pordsList);
-
-            if(dtfinal != null){
-                map = Methods.stringToHashMap("NOTAJSON%PRODJSON%DTFINAL%KM%NUMCAR",jsonNotas,jsonProds,dtfinal,"EXSISTS",numcar);
-            }else{
-                map = Methods.stringToHashMap("NOTAJSON%PRODJSON%KM%NUMCAR",jsonNotas,jsonProds,"EXSISTS",numcar);
-            }
+            map = Methods.stringToHashMap("NOTAJSON%PRODJSON%DTFINAL%KM%NUMCAR",jsonNotas,jsonProds,dtfinal,"EXSISTS",numcar);
 
             String encodedParams = null;
             try {
@@ -105,10 +95,11 @@ public class SaveNotas {
                 e.printStackTrace();
             }
         }else{
-            map = Methods.stringToHashMap("KM%NUMCAR","EXSISTS",numcar);
+            map = Methods.stringToHashMap("KM%NUMCAR%DTFINAL","EXSISTS",numcar,dtfinal);
             String encodedParams = null;
             try {
                 encodedParams = Methods.encode(map);
+                Log.i("NOTAS", encodedParams);
                 SRVConnection connection = new SRVConnection(activity, null, "response");
                 connection.execute(activity.getString(R.string.url_server_host) + activity.getString(R.string.url_server_save_auto), encodedParams);
             } catch (Exception e) {

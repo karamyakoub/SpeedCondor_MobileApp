@@ -22,8 +22,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".CheckProdActivity"
-            android:label="Confêrencia de produto"></activity>
+        <activity android:name=".OlderNotasActivity">
+        </activity>
+        <activity
+            android:name=".CheckProdActivity"
+            android:label="Confêrencia de produto" />
         <activity
             android:name=".ProdutosActivity"
             android:label="" />

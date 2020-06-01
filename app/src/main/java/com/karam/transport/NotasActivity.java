@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.work.WorkManager;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
@@ -18,7 +17,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -139,7 +138,6 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                     nfListFiltered.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
                     nfListFiltered.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
                     nfListFiltered.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
-                    nfListFiltered.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
                     nfListFiltered.get(pos).setStent(intent.getIntExtra("stEnt",0));
                     nfListFiltered.get(pos).setStcred(intent.getIntExtra("stCred",0));
                     nfListFiltered.remove(pos);
@@ -147,7 +145,6 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                 }else if(notasHeaderLayout.getSelectedTabPosition()==3){
                     nfListFiltered.get(pos).setEmail_cliene2(intent.getStringExtra("nf"));
                     nfListFiltered.get(pos).setObsentrega(intent.getStringExtra("obsEntrega"));
-                    nfListFiltered.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
                     nfListFiltered.get(pos).setStenvi(intent.getIntExtra("stEnvi",0));
                     nfListFiltered.get(pos).setStent(intent.getIntExtra("stEnt",0));
                     nfListFiltered.get(pos).setStcred(intent.getIntExtra("stCred",0));
@@ -235,15 +232,10 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.toast_btn_confirm:
-                if(isAllSent){
-                    //here
-                    saveKM();
-                }else{
-                    selecter = 0;
-                    alertDialog.dismiss();
-                    SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
-                    saveNotas.enviar();
-                }
+                alertDialog.dismiss();
+                Methods.showLoadingDialog(NotasActivity.this);
+                SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,String.valueOf(numcar));
+                saveNotas.enviar();
                 break;
             case R.id.toast_btn_dismiss:
                 alertDialog.dismiss();
@@ -253,32 +245,37 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onTaskFinish(String response) {
-        if(selecter==0){
-            if(response.trim().equals("ok")){
-                new AsyncTask<Void,Void,Void>(){
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        DBConnection dbConnection = new DBConnection(NotasActivity.this);
-                        NF nf = new NF();
-                        nf.setStenvi(1);
-                        dbConnection.updatetNF(nf,"NUMCAR=?",new String[]{String.valueOf(numcar).trim()});
-                        return null;
-                    }
+        if(response.trim().equals("ok")){
+            AfterFinish afterFinish = new AfterFinish();
+            afterFinish.execute();
+        }else if(response.trim().equals("501")){
+            Methods.setSharedPref(NotasActivity.this,"string",getString(R.string.SHtoken),"");
+            AfterFinish afterFinish = new AfterFinish();
+            afterFinish.execute();
+        }
+        else{
+            Methods.showCostumeToast(this,response);
+        }
+    }
 
-                    @Override
-                    protected void onPostExecute(Void aVoid) {
-                        Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
-                        dropDownDataWorker();
-                        Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
-                        finish();
-                        startActivity(intent);
-                    }
-                }.execute();
-            }else{
-                Methods.showCostumeToast(this,response);
-            }
-        }else{
+
+    class AfterFinish extends AsyncTask<Void,Void,Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            DBConnection dbConnection = new DBConnection(NotasActivity.this);
+            NF nf = new NF();
+            nf.setStenvi(1);
+            dbConnection.updatetNF(nf,"NUMCAR=?",new String[]{String.valueOf(numcar).trim()});
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void aVoid) {
             Methods.setSharedPref(NotasActivity.this,"long",getString(R.string.SHcarga),0l);
+            dropDownDataWorker();
+            try{
+                Methods.closeLoadingDialog();
+            }catch (NullPointerException ex){
+            }
             Intent intent = new Intent(NotasActivity.this,LoginActivity.class);
             finish();
             startActivity(intent);
@@ -345,8 +342,6 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.notas,menu);
@@ -405,45 +400,26 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                 new AsyncTask<Void,Void,String>(){
                     @Override
                     protected String doInBackground(Void... voids) {
+                        Looper.prepare();
                         DBConnection dbConnection = new DBConnection(NotasActivity.this);
                         Cursor c =dbConnection.select(false, "NF", new String[]{"NUMNOTA"},
                                 "STENT = 0 AND NUMCAR = ?", new String[]{String.valueOf(numcar)},null,null,null,null);//condition all nota checked if equal to 0
-                        Cursor c2 =dbConnection.select(false, "NF", new String[]{"NUMNOTA"},
-                                "STENVI = 0 AND STENT > 0 AND NUMCAR =?", new String[]{String.valueOf(numcar)},null,null,null,null);//condition all notas send if equal 0
-                        String returnedValue="";
-                        if(c.getCount() == 0 && c2.getCount() == 0){
-                            returnedValue = "ok|ok";
-                        }else if((c.getCount() > 0 && c2.getCount() == 0)){
-                            returnedValue = "notok|ok";
-                        }else if((c.getCount() == 0 && c2.getCount() > 0)){
-                            returnedValue = "ok|notok";
-                        }else if((c.getCount() > 0 && c2.getCount() > 0)){
-                            returnedValue = "notok|notok";
+                        if(c.getCount()==0){
+                            c.close();
+                            return "ok";
+                        }else {
+                            c.close();
+                            return "not ok";
                         }
-                        c.close();
-                        c2.close();
-                        return returnedValue;
                     }
                     @Override
                     protected void onPostExecute(String s) {
-                        switch (s.trim()){
-                            case "ok|ok":
-                                //
-                                saveKM();
-                                break;
-                            case "ok|notok":
-                                selecter=0;
-                                SaveNotas saveNotas2 = new SaveNotas(NotasActivity.this,NotasActivity.this,true,String.valueOf(numcar));
-                                saveNotas2.enviar();
-                                break;
-                            case "notok|ok":
-                                isAllSent = true;
-                                showDialog();
-                                break;
-                            case "notok|notok":
-                                isAllSent = false;
-                                showDialog();
-                                break;
+                        if(s.trim().equals("ok")){
+                            Methods.showLoadingDialog(NotasActivity.this);
+                            SaveNotas saveNotas = new SaveNotas(NotasActivity.this,NotasActivity.this,String.valueOf(numcar));
+                            saveNotas.enviar();
+                        }else{
+                            showDialog();
                         }
                     }
                 }.execute();
@@ -484,7 +460,6 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
     private void dropDownDataWorker(){
         WorkManager.getInstance(getApplicationContext()).cancelUniqueWork("com.karam.transport");
     }
-
 
     private void saveKM(){
         selecter = 1;

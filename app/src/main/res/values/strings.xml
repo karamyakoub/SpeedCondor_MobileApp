@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">transport</string>
+    <string name="app_name">FastLog</string>
     <string name="db_name">DBPEND</string>
     <string name="db_version">1</string>
     <string name="carregamento_greeting">Espero que tudo seja excelente.</string>
@@ -41,11 +41,15 @@
     <string name="check_prod_missing_info">Valores errados</string>
     <string name="maps_app_dialog">Qual aplicativo deseja usar?</string>
     <string name="map_app_error">Aplicatiovo não encontrado</string>
-    <string name="finalizar_warning">Não todas as entregas forma
+    <string name="finalizar_warning">Não todas as entregas foram
     finalizadas, pelo confirmar o fechamento o senhor(a)
-    aceita ter a responsabilidade por finalizar este carregamento</string>
+    aceita ter a responsabilidade por a falta de informação de poderá acontecer</string>
     <string name="finalizar_no_connection">Não há conexão, para finalizar a viagem
     precisa de ter uma conexão disponivel</string>
+    <string name="confirme_logout_msg">Fazer logout</string>
+    <string name="token_check">Insere o token</string>
+    <string name="autor">Developed by.Karam Yakoub Agha</string>
+    <string name="invalid_token_msg">Seu token foi vencido, entre em contato com o adiminstrador para pedir novo token</string>
     //_____________________________________URLS
     <string name="url_server_host">http://10.0.2.2/pendencia/php_app/</string>
     <string name="url_server_login">Login.php</string>
@@ -53,7 +57,7 @@
     <string name="url_server_save_notadevren">SaveNotaDevRen.php</string>
     <string name="url_server_save_conferencia">SaveNotaConfer.php</string>
     <string name="url_server_save_auto">saveNotasProdsAuto.php</string>
-
+    <string name="url_server_token_check">token.php</string>
     //_____________________________________SQL
     <string name="db_sql_createTableCarga">CREATE TABLE IF NOT EXISTS CARGA
         (
@@ -157,6 +161,7 @@
     <string name="SHnotaPosition">nota_position</string>
     <string name="SHqtdNotasTotal">qtd_notas_total</string>
     <string name="SHqtdNotas">qtd_notas</string>
+    <string name="SHtoken">token</string>
     //__________________________ARRAYS
     //array motivos cos
     <string-array name="motivos_dev_cod">
@@ -209,5 +214,8 @@
     <string name="permission_camera">Tem que conceder a permissão da camera</string>
     <string name="permission_location">Tem que conceder a permissão da localização</string>
     <string name="permission_audio">Tem que conceder a permissão da gravador de audio</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

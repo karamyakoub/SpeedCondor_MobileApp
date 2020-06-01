@@ -45,12 +45,4 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="5sp"/>
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/login_side_layout"
-        android:layout_width="300dp"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/colorBege_app"
-        android:layout_gravity="start"/>
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -19,8 +19,7 @@
         android:autoSizeMaxTextSize="34sp"
         android:textSize="30sp"
         android:textAlignment="center"
-        android:fontFamily="cursive"
-        android:textStyle="bold"
+        android:fontFamily="sans-serif-light"
         android:text="Boa Viagem!"/>
     <TextView
         android:layout_width="match_parent"
@@ -30,10 +29,10 @@
         android:autoSizeMinTextSize="24sp"
         android:autoSizeMaxTextSize="34sp"
         android:textSize="30sp"
-        android:fontFamily="cursive"
-        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed-light"
         android:textAlignment="center"
         android:text="@string/carregamento_greeting"/>
+
     <ImageView
         android:layout_width="325dp"
         android:layout_height="wrap_content"
@@ -79,22 +78,49 @@
 
         <Button
             android:id="@+id/carreg_btn"
-            android:layout_width="200dp"
+            android:layout_width="250dp"
             android:layout_height="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="10dp"
             android:layout_gravity="center"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:background="@color/colorGrey_app"
+            android:fontFamily="sans-serif-condensed-light"
+            android:textStyle="bold"
             android:scaleType="fitXY"
             android:text="@string/carreg_button_text"/>
-
+        <Button
+            android:id="@+id/carreg_cargas_btn"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-condensed-light"
+            android:textStyle="bold"
+            android:background="@color/colorGrey_app"
+            android:scaleType="fitXY"
+            android:text="CARREGAMENTOS ANTERIORES"/>
+        <Button
+            android:id="@+id/carreg_logout_btn"
+            android:layout_width="250dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-condensed-light"
+            android:textStyle="bold"
+            android:background="@color/colorGrey_app"
+            android:scaleType="fitXY"
+            android:text="LOGOUT"/>
         <TextView
             android:id="@+id/carreg_response_txtv"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
             android:textAlignment="center"
             android:textColor="@color/grey_900"

@@ -22,6 +22,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -241,6 +242,7 @@ public class BarcodeActivity extends AppCompatActivity implements View.OnClickLi
                         intent = new Intent("GETBARCODEPROD");
                     }
                     intent.putExtra("barcode", barcode);
+                    Log.i("karam", barcode);
                     LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(intent);
                     finish();
                 }

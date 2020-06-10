@@ -411,7 +411,7 @@ public class Methods {
                             map.get("CLIENTE"),map.get("EMAIL_CLIENTE"),map.get("EMAIL_CLIENTE2"),map.get("UF"),map.get("CIDADE"),
                             map.get("BAIRRO"),map.get("OBS1"),map.get("OBS2"),map.get("OBS3"),
                             null,map.get("RCA"),map.get("EMAIL_RCA"),null,null,null,
-                            null,null,0,0,0,-1,map.get("ENDERECO"),map.get("CEP"));
+                            null,null,0,0,0,-1,map.get("ENDERECO"),map.get("CEP"),longParser(map.get("NUMPED")),longParser(map.get("NUMTRANSVENDA")));
                     dbConnection.insertNF(nf,"OBSINTREGA,DTENT,LATENT,LONGTENT,PENDLAT,PENDLONGT",SQLiteDatabase.CONFLICT_REPLACE);
                 }
             }catch (SQLiteException ex){
@@ -437,7 +437,7 @@ public class Methods {
             //clear the memory
             prodMap=null;
             prod = null;
-            //here should add the part of nota de devolução
+            //here should add the part of nota pendencia
             List<HashMap<String,String>> nfMapPend = toList((mapCNPD.get("NFPEND")));
             if(nfMapPend!= null && nfMapPend.size()>0){
                 NF nfpend ;
@@ -449,7 +449,7 @@ public class Methods {
                                 map.get("BAIRRO"),map.get("OBS1"),map.get("OBS2"),map.get("OBS3"),
                                 null,map.get("RCA"),map.get("EMAIL_RCA"),null,null,null,
                                 FloatParser(map.get("LAT")),FloatParser(map.get("LONGT")),0,0,1,-1,map.get("ENDERECO"),map.get("CEP"),
-                                longParser(map.get("CODPROCESS")),map.get("DTENTREGA"),map.get("OBSENT"));
+                                longParser(map.get("CODPROCESS")),map.get("DTENTREGA"),map.get("OBSENT"),longParser(map.get("NUMPED")),longParser(map.get("NUMTRANSVENDA")));
                         dbConnection.insertNF(nfpend,"OBSINTREGA,DTENT,LATENT,PENDLONGT",SQLiteDatabase.CONFLICT_REPLACE);
                     }
                 }catch (SQLiteException ex){

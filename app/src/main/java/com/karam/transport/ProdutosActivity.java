@@ -43,7 +43,7 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
     boolean isDoubleBackClick = false;
     SearchView searchView;
     ProdAdapter prodAdapter;
-    long numnota = 0, codcli = 0, numcar = 0;
+    long numnota = 0, codcli = 0, numcar = 0,numtransvenda,numped;
     private static final String tagMenu = "karamTransportItemCheck";
     String cliente = "", outputFile = "", email_cliente = "", email_cliente2="", obs="";
     int lisPosition,notaPosition;
@@ -62,6 +62,8 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
         email_cliente = (String) Methods.getSharedPref(this, "string", getString(R.string.SHemail_cliente));
         cliente = (String) Methods.getSharedPref(this, "string", getString(R.string.SHcliente));
         notaPosition = (int) Methods.getSharedPref(this,"int",getString(R.string.SHnotaPosition));
+        numtransvenda = (long)Methods.getSharedPref(this,"long",getString(R.string.SHnumtransvenda));
+        numped = (long) Methods.getSharedPref(this,"long",getString(R.string.SHnumped));
         prodListView = findViewById(R.id.prod_listvw);
 
 
@@ -417,9 +419,15 @@ public class ProdutosActivity extends AppCompatActivity implements TaskListenerA
                 String fileName = numcar + "-" + nf.getNumnota();
                 if (Methods.isNetworkConnected) {
                     String audio = Methods.getBase64FromPath(outputFile);
-                    HashMap<String, String> map = Methods.stringToHashMap("NUMNOTA%NUMCAR%LAT%LONGT%DTENTREGA%OBSENT%EMAIL_CLIENTE%CODMOTIVO%STCRED%STATUS%AUDIO%FILENAME%PRODJSON",
+                    String email = "";
+                    if(nf.getEmail_cliene2()== null || nf.getEmail_cliene2().isEmpty()){
+                        email = email_cliente;
+                    }else{
+                        email = nf.getEmail_cliene2();
+                    }
+                    HashMap<String, String> map = Methods.stringToHashMap("NUMNOTA%NUMCAR%LAT%LONGT%DTENTREGA%OBSENT%EMAIL_CLIENTE%CODMOTIVO%STCRED%STATUS%AUDIO%FILENAME%PRODJSON%NUMTRANSVENDA%NUMPED",
                             String.valueOf(nf.getNumnota()), String.valueOf(numcar), String.valueOf(nf.getLatent()), String.valueOf(nf.getLongtent()), nf.getDtent(), nf.getObsentrega(),
-                            nf.getEmail_cliene2(),motivoCod[motivoPos] , String.valueOf(nf.getStcred()), String.valueOf(nf.getStent()), audio, fileName,jsonArr);
+                            email,motivoCod[motivoPos] , String.valueOf(nf.getStcred()), String.valueOf(nf.getStent()), audio, fileName,jsonArr,String.valueOf(numtransvenda),String.valueOf(numped));
                     try {
                         String encodedParams = Methods.encode(map);
                         SRVConnection connection = new SRVConnection(ProdutosActivity.this, null, "response");

@@ -290,8 +290,8 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
             Long numcarga = longs[0];
             nfList = new ArrayList<>();
             Cursor c = dbConnection.select(false, "NF", new String[]{"NUMNOTA", "CODCLI", "CLIENTE", "EMAIL_CLIENTE", "STENT", "STPEND", "UF", "CIDADE", "ENDERECO", "CEP",
-                            "BAIRRO", "OBS1", "OBS2", "OBS3","DTENT","PENDCODPROCESS","PENDDTENT","PENDOBS","PENDLAT","PENDLONGT"},
-                    "NUMCAR=? OR STPEND = 1", new String[]{String.valueOf(numcarga)}
+                            "BAIRRO", "OBS1", "OBS2", "OBS3","DTENT","PENDCODPROCESS","PENDDTENT","PENDOBS","PENDLAT","PENDLONGT","NUMTRANSVENDA","NUMPED"},
+                    "NUMCAR=? OR (NUMCAR=? AND STPEND = 1)", new String[]{String.valueOf(numcarga)}
                     , null, null, "CLIENTE", null);
             if (c != null) {
                 c.moveToFirst();
@@ -300,6 +300,8 @@ public class NotasActivity extends AppCompatActivity implements View.OnClickList
                     try {
                         nf.setNumnota(c.getLong(c.getColumnIndex("NUMNOTA")));
                         nf.setCodcli(c.getLong(c.getColumnIndex("CODCLI")));
+                        nf.setNumtransvenda(c.getLong(c.getColumnIndex("NUMTRANSVENDA")));
+                        nf.setNumped(c.getLong(c.getColumnIndex("NUMPED")));
                         nf.setCliente(c.getString(c.getColumnIndex("CLIENTE")));
                         nf.setStent(c.getInt(c.getColumnIndex("STENT")));
                         nf.setStpend(c.getInt(c.getColumnIndex("STPEND")));

@@ -1,10 +1,27 @@
 package com.karam.transport;
 
 public class NF {
-    Long numnota, numcar, codcli, codusur,pendcodprocess;
+    Long numnota, numcar, codcli, codusur,pendcodprocess,numped,numtransvenda;
     String cliente, email_cliente,email_cliene2, uf, ciddade, bairro, obs1, obs2, obs3, obsentrega, rca, email_rca, dtent,penddtent,endereco,cep,pendobs;
     Float latent, longtent, pendlat, pendlongt;
     Integer stenvi, stent, stpend,stcred,codmotivo;
+
+
+    public Long getNumped() {
+        return numped;
+    }
+
+    public void setNumped(Long numped) {
+        this.numped = numped;
+    }
+
+    public Long getNumtransvenda() {
+        return numtransvenda;
+    }
+
+    public void setNumtransvenda(Long numtransvenda) {
+        this.numtransvenda = numtransvenda;
+    }
 
     public Integer getCodmotivo() {
         return codmotivo;
@@ -44,7 +61,9 @@ public class NF {
               String cliente, String email_cliente,String email_cliene2, String uf, String ciddade,
               String bairro, String obs1, String obs2, String obs3, String obsentrega,
               String rca, String email_rca, String dtent, Float latent, Float longtent,
-              Float pendlat, Float pendlongt, Integer stenvi, Integer stent, Integer stpend,Integer stcred,String endereco,String cep) {
+              Float pendlat, Float pendlongt, Integer stenvi, Integer stent, Integer stpend,Integer stcred,String endereco,String cep,long numped,long numtransvenda) {
+        this.numped = numped;
+        this.numtransvenda = numtransvenda;
         this.numnota = numnota;
         this.numcar = numcar;
         this.codcli = codcli;
@@ -80,7 +99,9 @@ public class NF {
               String rca, String email_rca, String dtent, Float latent, Float longtent,
               Float pendlat, Float pendlongt, Integer stenvi, Integer stent, Integer stpend,
               Integer stcred,String endereco,String cep,Long pendcodprocess,
-              String penddtent,String pendobs) {
+              String penddtent,String pendobs,long numped,long numtransvenda) {
+        this.numped = numped;
+        this.numtransvenda = numtransvenda;
         this.numnota = numnota;
         this.numcar = numcar;
         this.codcli = codcli;

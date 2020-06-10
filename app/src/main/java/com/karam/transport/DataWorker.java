@@ -120,10 +120,17 @@ public class DataWorker extends ListenableWorker {
                         mapNF.put(":LONGT", String.valueOf(c.getFloat(c.getColumnIndex("LONGTENT"))));
                         mapNF.put(":DTENTREGA", String.valueOf(c.getString(c.getColumnIndex("DTENT"))));
                         mapNF.put(":OBSENT", String.valueOf(c.getString(c.getColumnIndex("OBSENTREGA"))));
-                        mapNF.put(":EMAIL_CLIENTE", String.valueOf(c.getString(c.getColumnIndex("EMAIL_CLIENTE2"))));
+                        if(c.getString(c.getColumnIndex("EMAIL_CLIENTE2"))== null || c.getString(c.getColumnIndex("EMAIL_CLIENTE2")).isEmpty()){
+                            mapNF.put(":EMAIL_CLIENTE", String.valueOf(c.getString(c.getColumnIndex("EMAIL_CLIENTE"))));
+                        }else{
+                            mapNF.put(":EMAIL_CLIENTE", String.valueOf(c.getString(c.getColumnIndex("EMAIL_CLIENTE2"))));
+                        }
+
                         mapNF.put(":STATUS", String.valueOf(c.getInt(c.getColumnIndex("STENT"))));
                         mapNF.put(":STCRED", String.valueOf(c.getInt(c.getColumnIndex("STCRED"))));
                         mapNF.put(":CODMOTIVO", String.valueOf(c.getInt(c.getColumnIndex("CODMOTIVO"))));
+                        mapNF.put(":NUMTRANSVENDA",String.valueOf(c.getInt(c.getColumnIndex("NUMTRANSVENDA"))));
+                        mapNF.put(":NUMPED",String.valueOf(c.getInt(c.getColumnIndex("NUMPED"))));
                         mapNF.put(":AUDIO", audio);
                         mapNF.put(":FILENAME", fileName);
                         notasList.add(mapNF);

@@ -216,6 +216,12 @@ public class DBConnection extends SQLiteOpenHelper {
         if(nf.getCodmotivo()!=null){
             contentValues.put("CODMOTIVO",nf.getCodmotivo());
         }
+        if(nf.getNumped()!=null){
+            contentValues.put("NUMPED",nf.getNumped());
+        }
+        if(nf.getNumtransvenda()!=null){
+            contentValues.put("NUMTRANSVENDA",nf.getNumtransvenda());
+        }
         long affectedRows = db.insertWithOnConflict("NF",column,contentValues,conflictAlgorithm);
         if(affectedRows>-1){
             return true;
@@ -341,7 +347,15 @@ public class DBConnection extends SQLiteOpenHelper {
         if(nf.getPendobs()!=null){
             contentValues.put("PENDOBS",nf.getPendobs());
         }
-
+        if(nf.getNumped()!=null){
+            contentValues.put("NUMPED",nf.getNumped());
+        }
+        if(nf.getNumtransvenda()!=null){
+            contentValues.put("NUMTRANSVENDA",nf.getNumtransvenda());
+        }
+        if(nf.getCodmotivo()!=null){
+            contentValues.put("CODMOTIVO",nf.getCodmotivo());
+        }
         long affectedRows = db.update("NF",contentValues,whereClause,whereValues);
         if(affectedRows>-1){
             return true;

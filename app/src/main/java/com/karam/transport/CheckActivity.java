@@ -35,7 +35,7 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
     NF nf;
     AlertDialog alertDialog;
     int position,posSpinner;
-    long numcar,numnota,codcli;
+    long numcar,numnota,codcli,numtransvenda,numped;
     String cliente;
 
 
@@ -76,6 +76,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
         numnota = Methods.longParser(args.getString("nf"));
         codcli = Methods.longParser(args.getString("codcli"));
         cliente = args.getString("cliente");
+        numtransvenda = Methods.longParser(args.getString("numtransvenda"));
+        numped = Methods.longParser(args.getString("numped"));
         masterLinLayaout.setOnTouchListener(this);
         startButton.setOnClickListener(this);
         devButton.setOnClickListener(this);
@@ -96,6 +98,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 Methods.setSharedPref(this,"string",getString(R.string.SHcliente),cliente);
                 Methods.setSharedPref(this,"string",getString(R.string.SHemail_cliente),email_cliente);
                 Methods.setSharedPref(this,"int",getString(R.string.SHnotaPosition),position);
+                Methods.setSharedPref(this,"long",getString(R.string.SHnumtransvenda),numtransvenda);
+                Methods.setSharedPref(this,"long",getString(R.string.SHnumped),numped);
                 Activity nActivity =  NotasActivity.getInstance();
                 nActivity.finish();
                 finish();
@@ -178,7 +182,8 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 dbConnection = new DBConnection(CheckActivity.this);
                 //set all the informatins to new nota fiscal
                 nf = new NF();
-                nf.setNumnota(Methods.longParser(String.valueOf(nf_check_txtvw.getText())));nf.setEmail_cliene2((email_cliente2!=null)?email_cliente2:"");
+                nf.setNumnota(Methods.longParser(String.valueOf(nf_check_txtvw.getText())));
+                nf.setEmail_cliene2((email_cliente2!=null)?email_cliente2:"");
                 nf.setObsentrega((obs!=null)?obs:"");
                 nf.setDtent(Methods.getCurrentDate());
                 nf.setLatent(Methods.roundFloat(location.latitude,6));
@@ -186,16 +191,25 @@ public class CheckActivity extends AppCompatActivity implements View.OnClickList
                 nf.setStenvi(0);
                 nf.setStent(stEnt);
                 nf.setStcred(stCred);
+                nf.setNumtransvenda(numtransvenda);
+                nf.setNumped(numped);
                 //Try to save online into the server
                 Methods.checkConnection(CheckActivity.this);
                 String[] motivoCod = getResources().getStringArray(R.array.motivos_dev_cod);
                 nf.setCodmotivo(Methods.integerParser(motivoCod[posSpinner]));
+                Log.i("karam1313", String.valueOf(nf.getCodmotivo()));
                 String fileName = numcar + "-" + nf.getNumnota();
+                String email="";
+                if(nf.getEmail_cliene2()== null || nf.getEmail_cliene2().isEmpty()){
+                    email = email_cliente;
+                }else{
+                    email = nf.getEmail_cliene2();
+                }
                 if(Methods.isNetworkConnected){
                     String audio = Methods.getBase64FromPath(outputFile);
-                    HashMap<String,String> map = Methods.stringToHashMap("NUMNOTA%NUMCAR%LAT%LONGT%DTENTREGA%OBSENT%EMAIL_CLIENTE%CODMOTIVO%STCRED%STATUS%AUDIO%FILENAME",
+                    HashMap<String,String> map = Methods.stringToHashMap("NUMNOTA%NUMCAR%LAT%LONGT%DTENTREGA%OBSENT%EMAIL_CLIENTE%CODMOTIVO%STCRED%STATUS%AUDIO%FILENAME%NUMTRANSVENDA%NUMPED",
                             String.valueOf(nf.getNumnota()),String.valueOf(numcar),String.valueOf(nf.getLatent()),String.valueOf(nf.getLongtent()),nf.getDtent(),nf.getObsentrega(),
-                            nf.getEmail_cliene2(),motivoCod[posSpinner], String.valueOf(nf.getStcred()),nf.getStent().toString(),audio,fileName);
+                            email,motivoCod[posSpinner], String.valueOf(nf.getStcred()),nf.getStent().toString(),audio,fileName,String.valueOf(nf.getNumtransvenda()),String.valueOf(nf.getNumped()));
                     try {
                         String encodedParams = Methods.encode(map);
                         SRVConnection connection = new SRVConnection(CheckActivity.this,null,"response");

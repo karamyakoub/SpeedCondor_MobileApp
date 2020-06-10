@@ -159,6 +159,8 @@ public class NFAdapter extends BaseAdapter implements Filterable {
                 args.putString("status",String.valueOf(status_txtvw.getText()));
                 args.putString("email_cliente",items.get(position).getEmail_cliente());
                 args.putInt("position",position);
+                args.putString("numtransvenda", String.valueOf(items.get(position).getNumtransvenda()));
+                args.putString("numped", String.valueOf(items.get(position).getNumped()));
                 //open the check activity
                 Intent intent = new Intent(activity,CheckActivity.class);
                 intent.putExtras(args);

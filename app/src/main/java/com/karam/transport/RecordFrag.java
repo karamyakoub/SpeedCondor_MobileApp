@@ -417,7 +417,6 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
                     timer2.cancel();
                 }
             }
-
             @Override
             public void onFinish() {
                 recorded();

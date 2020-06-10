@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FastLog</string>
+    <string name="app_name">Speed Condor</string>
     <string name="db_name">DBPEND</string>
     <string name="db_version">1</string>
     <string name="carregamento_greeting">Espero que tudo seja excelente.</string>
@@ -51,7 +51,7 @@
     <string name="autor">Developed by.Karam Yakoub Agha</string>
     <string name="invalid_token_msg">Seu token foi vencido, entre em contato com o adiminstrador para pedir novo token</string>
     //_____________________________________URLS
-    <string name="url_server_host">http://10.0.2.2/pendencia/php_app/</string>
+    <string name="url_server_host">https://logistica.condorbrasil.com.br/transporte/php_app/</string>
     <string name="url_server_login">Login.php</string>
     <string name="url_server_load_carreg">LoadByCarga.php</string>
     <string name="url_server_save_notadevren">SaveNotaDevRen.php</string>
@@ -72,6 +72,8 @@
                     ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     NUMNOTA INT(10) NOT NULL,
                     NUMCAR INT(8) NOT NULL,
+                    NUMPED INT(10) NOT NULL,
+                    NUMTRANSVENDA INT(10) NOT NULL,
                     CODCLI INT(8),
                     CLIENTE TEXT(60),
                     EMAIL_CLIENTE TEXT(100),
@@ -160,6 +162,8 @@
     <string name="SHemail_cliente">email_cliente</string>
     <string name="SHnotaPosition">nota_position</string>
     <string name="SHqtdNotasTotal">qtd_notas_total</string>
+    <string name="SHnumtransvenda">numtransvenda</string>
+    <string name="SHnumped">numped</string>
     <string name="SHqtdNotas">qtd_notas</string>
     <string name="SHtoken">token</string>
     //__________________________ARRAYS

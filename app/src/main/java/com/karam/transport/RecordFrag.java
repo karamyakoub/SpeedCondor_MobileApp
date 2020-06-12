@@ -295,6 +295,8 @@ public class RecordFrag extends BottomSheetDialogFragment implements View.OnClic
         recordBtn.setEnabled(false);
         playBtn.setEnabled(true);
         deleteBtn.setEnabled(true);
+        isFinalizar = true;
+        btnFinalizar.setEnabled(true);
         //upload_audio("myRecord"+String.valueOf(id)+".3gp",outputFile,"http://10.0.2.2/pendencia_composer/classes/Uploader.php");
     }
 

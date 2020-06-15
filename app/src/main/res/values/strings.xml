@@ -6,10 +6,10 @@
     <string name="carregamento_title">N°CARREGAMENTO: </string>
     <string name="login_codigo">Código: </string>
     <string name="login_senha">Senha: </string>
-    <string name="login_missing_info">Insere código e senha</string>
-    <string name="internet_connectivity_error">Sem conexão à internet</string>
+    <string name="login_missing_info">Inserir código e senha</string>
+    <string name="internet_connectivity_error">Sem conexão</string>
     <string name="login_invalid_json_error">Resposta nula</string>
-    <string name="closing_alert">Aperte de novo para fechar</string>
+    <string name="closing_alert">Para fechar, aperte novamente</string>
     <string name="carreg_missing_info">Insere N°CARREGAMENTO</string>
     <string name="carreg_button_text">SINCRONIZAR</string>
     <string name="notas_button_finalizar_text">Finalizar viagem</string>
@@ -20,36 +20,29 @@
     <string name="notas_status_emconferencia">Em conferência</string>
     <string name="notas_status_reentrega">Re-entrega</string>
     <string name="conferencia_start_title">CONFÊRENCIA</string>
-    <string name="conferencia_button_start">Conferir Mercadoria</string>
+    <string name="conferencia_button_start">Inciar confêrencia</string>
     <string name="conferencia_button_dev">Devolução total</string>
-    <string name="conferencia_button_per">perfeito</string>
-    <string name="record_hold_message">Segure para gravar</string>
-    <string name="no_flash">O celular é sem luz</string>
-    <string name="details_local">Local da entrega</string>
+    <string name="conferencia_button_per">Entrega realizada com sucesso</string>
+    <string name="no_flash">O celular é sem flash</string>
+    <string name="details_local">Local de entrega</string>
     <string name="details_obs">OBS de entrega</string>
-    <string name="details_dialog_tag">Info nota fiscal</string>
-    <string name="credito_check">Deseja gerar credito?</string>
-    <string name="invalid_barcode_nf">Codigo de barra invalido ou não existe na lista das notas</string>
-    <string name="invalid_barcode_prod">Codigo de barra invalido ou não existe na lista dos produtos</string>
-    <string name="invalid_barcode_nf2">Esta nota já foi conferida</string>
-    <string name="canceling_checking">Aperte de novo para cancelar</string>
-    <string name="invalid_email_format">Email do cliente inserido está em formato inválido</string>
-    <string name="pause_error">O processo de carregar os dados da carga foi intorrompido
-    Evite sair do aplicativo enquato carregando</string>
-    <string name="gps_notEnables">GPS desativado, deseja ir para os configurações para ativa-lo</string>
-    <string name="save_nfdevren_error">Aconteceu um erro em gravação, tente de novo</string>
-    <string name="check_prod_missing_info">Valores errados</string>
+    <string name="credito_check">O cliente opitou por gerar crédito?</string>
+    <string name="invalid_barcode_nf">Codigo de barra invalido ou não pertence nem uma nota</string>
+    <string name="invalid_barcode_prod">Codigo de barra invalido ou não pertence á está nota</string>
+    <string name="invalid_barcode_nf2">Está nota já foi conferida</string>
+    <string name="canceling_checking">Para cancelar, Aperte novamente</string>
+    <string name="invalid_email_format">Email inválido</string>
+    <string name="gps_notEnables">Localização desativada, para realizar este processo deveria ativar-lo</string>
+    <string name="save_nfdevren_error">Aconteceu um erro na gravação, tente novamente</string>
+    <string name="check_prod_missing_info">Valor divergente</string>
     <string name="maps_app_dialog">Qual aplicativo deseja usar?</string>
     <string name="map_app_error">Aplicatiovo não encontrado</string>
-    <string name="finalizar_warning">Não todas as entregas foram
-    finalizadas, pelo confirmar o fechamento o senhor(a)
-    aceita ter a responsabilidade por a falta de informação de poderá acontecer</string>
-    <string name="finalizar_no_connection">Não há conexão, para finalizar a viagem
-    precisa de ter uma conexão disponivel</string>
+    <string name="finalizar_warning">Algumas entregas não foram informadas, deseja finalizar?\n
+    obs. a responsabilidade por não passar informação está sujeito a penalidade </string>
+    <string name="finalizar_no_connection">No momento não há conexão, aguarde cobertura para finalizar a viagem</string>
     <string name="confirme_logout_msg">Fazer logout</string>
     <string name="token_check">Insere o token</string>
     <string name="autor">Developed by.Karam Yakoub Agha</string>
-    <string name="invalid_token_msg">Seu token foi vencido, entre em contato com o adiminstrador para pedir novo token</string>
     //_____________________________________URLS
     <string name="url_server_host">https://logistica.condorbrasil.com.br/transporte/php_app/</string>
     <string name="url_server_login">Login.php</string>
@@ -215,11 +208,7 @@
     </string-array>
     //_________________________Permissions
     <string name="permission_title">Permissão</string>
-    <string name="permission_camera">Tem que conceder a permissão da camera</string>
-    <string name="permission_location">Tem que conceder a permissão da localização</string>
-    <string name="permission_audio">Tem que conceder a permissão da gravador de audio</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="permission_camera">Permitir acesso á camera</string>
+    <string name="permission_location">Permitir acesso á localização</string>
+    <string name="permission_audio">Permitir acesso á gravador de audio</string>
 </resources>
